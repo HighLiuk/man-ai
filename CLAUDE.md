@@ -32,6 +32,10 @@ DI via Hilt. Each layer only depends inward (ui → domain ← data).
 
 PDF import → pages rendered as bitmaps → AI pipeline detects balloons → OCR extracts text → MeCab segments words + generates furigana → translation engine translates → UI overlays results on page
 
+## Versioning
+
+Semantic versioning (MAJOR.MINOR.PATCH). Update `versionName` in `android/app/build.gradle.kts` and bump `versionCode` with each release. Keep the README Features section in sync with implemented features.
+
 ## Conventions
 
 - All code, comments, and git commits in **English**
