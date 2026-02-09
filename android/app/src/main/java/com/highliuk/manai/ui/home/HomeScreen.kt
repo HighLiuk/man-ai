@@ -7,6 +7,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,10 +23,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -52,7 +55,11 @@ import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
+fun HomeScreen(
+    onMangaClick: (Long) -> Unit = {},
+    onSettingsClick: () -> Unit = {},
+    viewModel: HomeViewModel = hiltViewModel(),
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val pdfPickerLauncher = rememberLauncherForActivityResult(
@@ -63,7 +70,17 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(stringResource(R.string.app_name)) })
+            TopAppBar(
+                title = { Text(stringResource(R.string.app_name)) },
+                actions = {
+                    IconButton(onClick = onSettingsClick) {
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = stringResource(R.string.settings),
+                        )
+                    }
+                },
+            )
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -96,30 +113,39 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 }
             }
             is HomeUiState.Success -> {
-                MangaList(mangaList = state.mangaList, modifier = Modifier.padding(padding))
+                MangaList(
+                    mangaList = state.mangaList,
+                    onMangaClick = onMangaClick,
+                    modifier = Modifier.padding(padding),
+                )
             }
         }
     }
 }
 
 @Composable
-private fun MangaList(mangaList: List<Manga>, modifier: Modifier = Modifier) {
+private fun MangaList(
+    mangaList: List<Manga>,
+    onMangaClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(mangaList, key = { it.id }) { manga ->
-            MangaListItem(manga = manga)
+            MangaListItem(manga = manga, onClick = { onMangaClick(manga.id) })
         }
     }
 }
 
 @Composable
-private fun MangaListItem(manga: Manga) {
+private fun MangaListItem(manga: Manga, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { onClick() }
             .padding(12.dp),
     ) {
             PdfCoverThumbnail(

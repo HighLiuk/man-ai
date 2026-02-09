@@ -29,7 +29,7 @@ class PdfDocumentHandlerImpl @Inject constructor(
      * Renders a single page of the PDF as a Bitmap.
      * Used by the UI to generate cover thumbnails.
      */
-    suspend fun renderPage(uriString: String, pageIndex: Int, width: Int): Bitmap? =
+    override suspend fun renderPage(uriString: String, pageIndex: Int, width: Int): Bitmap? =
         withContext(Dispatchers.IO) {
             val uri = Uri.parse(uriString)
             val fd = contentResolver.openFileDescriptor(uri, "r") ?: return@withContext null
