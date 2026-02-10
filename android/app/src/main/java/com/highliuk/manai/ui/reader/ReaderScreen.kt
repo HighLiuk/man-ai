@@ -5,11 +5,11 @@ package com.highliuk.manai.ui.reader
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -176,33 +177,30 @@ private fun SinglePageContent(
             .collect { page -> onPageChanged(page) }
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        HorizontalPager(
-            state = pagerState,
-            reverseLayout = isRtl,
-            modifier = Modifier.fillMaxSize(),
-        ) { pageIndex ->
-            PdfPageImage(
-                uriString = state.filePath,
-                pageIndex = pageIndex,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier.fillMaxSize(),
-            )
-        }
-
-        if (tapEnabled) {
-            TapOverlay(
-                isRtl = isRtl,
-                onNext = {
-                    val target = (pagerState.currentPage + 1).coerceAtMost(state.pageCount - 1)
-                    scope.launch { pagerState.scrollToPage(target) }
-                },
-                onPrevious = {
-                    val target = (pagerState.currentPage - 1).coerceAtLeast(0)
-                    scope.launch { pagerState.scrollToPage(target) }
-                },
-            )
-        }
+    HorizontalPager(
+        state = pagerState,
+        reverseLayout = isRtl,
+        modifier = modifier.fillMaxSize(),
+    ) { pageIndex ->
+        PdfPageImage(
+            uriString = state.filePath,
+            pageIndex = pageIndex,
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .fillMaxSize()
+                .tapToNavigate(
+                    enabled = tapEnabled,
+                    isRtl = isRtl,
+                    onNext = {
+                        val target = (pagerState.currentPage + 1).coerceAtMost(state.pageCount - 1)
+                        scope.launch { pagerState.scrollToPage(target) }
+                    },
+                    onPrevious = {
+                        val target = (pagerState.currentPage - 1).coerceAtLeast(0)
+                        scope.launch { pagerState.scrollToPage(target) }
+                    },
+                ),
+        )
     }
 }
 
@@ -233,57 +231,54 @@ private fun DoublePageContent(
             }
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        HorizontalPager(
-            state = pagerState,
-            reverseLayout = isRtl,
-            modifier = Modifier.fillMaxSize(),
-        ) { spreadIndex ->
-            val (firstPage, secondPage) = spreadToPages(spreadIndex, state.pageCount, coverAlone)
+    val tapModifier = Modifier.tapToNavigate(
+        enabled = tapEnabled,
+        isRtl = isRtl,
+        onNext = {
+            val target = (pagerState.currentPage + 1).coerceAtMost(totalSpreads - 1)
+            scope.launch { pagerState.scrollToPage(target) }
+        },
+        onPrevious = {
+            val target = (pagerState.currentPage - 1).coerceAtLeast(0)
+            scope.launch { pagerState.scrollToPage(target) }
+        },
+    )
 
-            if (secondPage != null) {
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    PdfPageImage(
-                        uriString = state.filePath,
-                        pageIndex = firstPage,
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight(),
-                    )
-                    PdfPageImage(
-                        uriString = state.filePath,
-                        pageIndex = secondPage,
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight(),
-                    )
-                }
-            } else {
+    HorizontalPager(
+        state = pagerState,
+        reverseLayout = isRtl,
+        modifier = modifier.fillMaxSize(),
+    ) { spreadIndex ->
+        val (firstPage, secondPage) = spreadToPages(spreadIndex, state.pageCount, coverAlone)
+
+        if (secondPage != null) {
+            Row(
+                modifier = Modifier.fillMaxSize().then(tapModifier),
+                horizontalArrangement = Arrangement.Center,
+            ) {
                 PdfPageImage(
                     uriString = state.filePath,
                     pageIndex = firstPage,
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                )
+                PdfPageImage(
+                    uriString = state.filePath,
+                    pageIndex = secondPage,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
                 )
             }
-        }
-
-        if (tapEnabled) {
-            TapOverlay(
-                isRtl = isRtl,
-                onNext = {
-                    val target = (pagerState.currentPage + 1).coerceAtMost(totalSpreads - 1)
-                    scope.launch { pagerState.scrollToPage(target) }
-                },
-                onPrevious = {
-                    val target = (pagerState.currentPage - 1).coerceAtLeast(0)
-                    scope.launch { pagerState.scrollToPage(target) }
-                },
+        } else {
+            PdfPageImage(
+                uriString = state.filePath,
+                pageIndex = firstPage,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.fillMaxSize().then(tapModifier),
             )
         }
     }
@@ -380,39 +375,22 @@ private fun PdfPageImage(
 }
 
 @Composable
-private fun TapOverlay(
+private fun Modifier.tapToNavigate(
+    enabled: Boolean,
     isRtl: Boolean,
     onNext: () -> Unit,
     onPrevious: () -> Unit,
-) {
-    val leftAction = if (isRtl) onNext else onPrevious
-    val rightAction = if (isRtl) onPrevious else onNext
-
-    Row(modifier = Modifier.fillMaxSize()) {
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = leftAction,
-                ),
-        )
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight(),
-        )
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = rightAction,
-                ),
-        )
+): Modifier {
+    if (!enabled) return this
+    val currentOnNext by rememberUpdatedState(onNext)
+    val currentOnPrevious by rememberUpdatedState(onPrevious)
+    return pointerInput(isRtl) {
+        detectTapGestures { offset ->
+            val third = size.width / 3f
+            when {
+                offset.x < third -> if (isRtl) currentOnNext() else currentOnPrevious()
+                offset.x > 2 * third -> if (isRtl) currentOnPrevious() else currentOnNext()
+            }
+        }
     }
 }
