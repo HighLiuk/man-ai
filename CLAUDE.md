@@ -2,6 +2,21 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ MANDATORY WORKFLOW — EXECUTE FOR EVERY TASK
+
+For ANY code change (bug fix, feature, refactor), follow RED-GREEN-REFACTOR:
+
+1. Write FAILING test → run `./gradlew test` → verify RED output
+2. Write MINIMUM production code → run tests → verify GREEN output
+3. Refactor if needed (tests must stay green)
+
+RULES:
+
+- Complete one full RED-GREEN-REFACTOR cycle per task before moving to the next
+- NEVER write production code before its failing test exists
+- If you wrote production code first, DELETE IT and start over with the test
+- Always run and show test output at each step
+
 ## Project
 
 慢愛 (Man AI) — Android manga reader with on-device AI for text detection, OCR, furigana, and translation. Native Android app (Kotlin + Jetpack Compose).
@@ -11,50 +26,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Root — repo-level config (CLAUDE.md, README, LICENSE, .github, .gitignore)
 - `android/` — Android project (Gradle root)
 
-## TDD — THE PRIME DIRECTIVE
+## Test Infrastructure & Rules
 
-**Every single line of production code in this project MUST be driven by a failing test.** This is not a guideline — it is the foundational principle upon which the entire codebase is built. The project was reset to zero specifically because this rule was not followed, and no code written without TDD can be trusted.
-
-### Why TDD is Non-Negotiable
-
-1. **Confidence**: Every feature works because a test proves it works — not because it "looks right"
-2. **Regression safety**: Every bug fix has a test that reproduces the bug, so it can never silently return
-3. **Design pressure**: Writing tests first forces better API design — if it's hard to test, it's hard to use
-4. **Living documentation**: Tests describe what the code does, not what comments claim it does
-5. **Fearless refactoring**: With full test coverage, any refactor is safe — tests catch breakage immediately
-
-### The Red-Green-Refactor Cycle
-
-Every change follows this exact cycle. No exceptions.
-
-```
-1. RED    — Write a test that describes the desired behavior. Run it. It MUST FAIL.
-            If it passes, the test is useless — it doesn't actually verify new behavior.
-
-2. GREEN  — Write the MINIMUM production code to make the test pass. Nothing more.
-            No "while I'm here" improvements. No premature abstractions.
-
-3. REFACTOR — Clean up both test and production code while keeping all tests green.
-              Extract helpers, remove duplication, improve naming — but change no behavior.
-```
-
-### Critical Rules
-
-- **NEVER write production code without a failing test first.** Not even "obvious" code, not even "simple" utilities, not even configuration classes. If it has logic, it needs a test.
-- **Tests MUST exercise REAL code.** Import and call the actual function/class under test. A test that recreates logic in isolation without importing the source is WORTHLESS — it only tests your assumptions, not the code.
-- **Verify tests catch failures.** After making a test pass, mentally (or actually) revert the production code. The test MUST fail. If it still passes, the test is a false positive — delete it and write a real one.
-- **For bug fixes**: First write a test that reproduces the bug (RED). Then fix the bug (GREEN). This guarantees the bug can never return undetected.
-- **Visibility for testability**: If a function needs to be tested but is `private`, make it `internal`. Testability trumps encapsulation.
-- **`android.util.Log` is NOT available in unit tests.** Never use it in ViewModels or domain logic. Use a testable logging abstraction if needed.
-
-### Test Infrastructure
-
-- **MockK** for mocking dependencies
-- **StandardTestDispatcher** for coroutine testing
-- **Turbine** for Flow testing
+- **MockK** for mocking, **Turbine** for Flow, **StandardTestDispatcher** for coroutines
 - **JUnit 4** as test runner
 - Test files mirror source structure under `src/test/java/`
 - Instrumented Compose UI tests in `src/androidTest/java/` — use `createComposeRule()`
+- **`android.util.Log` is NOT available in unit tests** — never use it in ViewModels or domain logic
+- **Visibility for testability**: if a function needs testing but is `private`, make it `internal`
+- **Tests MUST import and call REAL code** — a test that recreates logic without importing the source is worthless
 
 ## Architecture
 
