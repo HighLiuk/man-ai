@@ -69,6 +69,7 @@ Semantic versioning (MAJOR.MINOR.PATCH). Each release: bump `versionName` + `ver
 - Coroutines + Flow for async (no RxJava)
 - Room for local persistence
 - Repository pattern: interface in domain/, implementation in data/
+- **Multi-language**: every user-facing or accessibility string goes in `res/values/strings.xml` — use `stringResource(R.string.xxx)` in composables, NEVER hardcode strings
 
 ## MCP Servers
 
