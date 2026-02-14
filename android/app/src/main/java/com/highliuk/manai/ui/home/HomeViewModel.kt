@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.highliuk.manai.data.pdf.PdfMetadataExtractor
 import com.highliuk.manai.domain.model.Manga
 import com.highliuk.manai.domain.repository.MangaRepository
+import com.highliuk.manai.domain.repository.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,11 +16,15 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val repository: MangaRepository,
-    private val pdfMetadataExtractor: PdfMetadataExtractor
+    private val pdfMetadataExtractor: PdfMetadataExtractor,
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
     val mangaList: StateFlow<List<Manga>> = repository.getAllManga()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val gridColumns: StateFlow<Int> = userPreferencesRepository.gridColumns
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 2)
 
     fun importManga(uri: String, fileName: String) {
         viewModelScope.launch {

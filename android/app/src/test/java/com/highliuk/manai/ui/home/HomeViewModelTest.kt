@@ -4,7 +4,9 @@ import app.cash.turbine.test
 import com.highliuk.manai.data.pdf.PdfMetadataExtractor
 import com.highliuk.manai.domain.model.Manga
 import com.highliuk.manai.domain.repository.MangaRepository
+import com.highliuk.manai.domain.repository.UserPreferencesRepository
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -25,12 +27,15 @@ class HomeViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private val repository = mockk<MangaRepository>(relaxed = true)
     private val pdfExtractor = mockk<PdfMetadataExtractor>(relaxed = true)
+    private val userPreferencesRepository = mockk<UserPreferencesRepository>(relaxed = true)
     private val mangaFlow = MutableStateFlow<List<Manga>>(emptyList())
+    private val gridColumnsFlow = MutableStateFlow(2)
 
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         coEvery { repository.getAllManga() } returns mangaFlow
+        every { userPreferencesRepository.gridColumns } returns gridColumnsFlow
     }
 
     @After
@@ -38,7 +43,7 @@ class HomeViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun createViewModel() = HomeViewModel(repository, pdfExtractor)
+    private fun createViewModel() = HomeViewModel(repository, pdfExtractor, userPreferencesRepository)
 
     @Test
     fun `mangaList emits empty list initially`() = runTest(testDispatcher) {
@@ -114,6 +119,17 @@ class HomeViewModelTest {
 
         coVerify {
             repository.insertManga(match { it.title == "my-manga" && it.pageCount == 5 })
+        }
+    }
+
+    @Test
+    fun `gridColumns emits value from preferences repository`() = runTest(testDispatcher) {
+        val viewModel = createViewModel()
+
+        viewModel.gridColumns.test {
+            assertEquals(2, awaitItem())
+            gridColumnsFlow.value = 3
+            assertEquals(3, awaitItem())
         }
     }
 }

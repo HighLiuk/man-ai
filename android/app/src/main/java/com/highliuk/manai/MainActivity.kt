@@ -8,11 +8,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.highliuk.manai.ui.home.HomeScreen
 import com.highliuk.manai.ui.home.HomeViewModel
+import com.highliuk.manai.ui.navigation.ManAiNavHost
 import com.highliuk.manai.ui.theme.ManAiTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,7 +22,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             ManAiTheme {
                 val viewModel: HomeViewModel = hiltViewModel()
-                val mangaList by viewModel.mangaList.collectAsState()
 
                 val pdfPicker = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.OpenDocument()
@@ -39,10 +36,8 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                HomeScreen(
-                    mangaList = mangaList,
-                    onImportClick = { pdfPicker.launch(arrayOf("application/pdf")) },
-                    onSettingsClick = { /* TODO: navigate to settings */ }
+                ManAiNavHost(
+                    onImportClick = { pdfPicker.launch(arrayOf("application/pdf")) }
                 )
             }
         }
