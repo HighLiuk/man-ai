@@ -1,23 +1,30 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
-# Only run tests when Kotlin/Java source files are edited
-INPUT=$(cat /dev/stdin)
-FILE=$(echo "$INPUT" | jq -r '.tool_input.file_path // .tool_input.path // ""')
+exec 2>/dev/null
 
-# Skip non-source files (docs, configs, skills, etc.)
-if [[ ! "$FILE" =~ \.(kt|java)$ ]]; then
+INPUT=$(cat)
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // .tool_input.path // empty')
+
+if [[ "$FILE_PATH" != *.kt && "$FILE_PATH" != *.java ]]; then
+  echo '{"systemMessage": "⚠️ Not a Kotlin/Java file. Skipping tests."}'
   exit 0
 fi
 
-# Skip files outside the Android project
-if [[ "$FILE" != *"android/"* ]]; then
-  exit 0
-fi
+cd "$CLAUDE_PROJECT_DIR/android" && ./gradlew test --quiet >/dev/null 2>&1
+EXIT_CODE=$?
 
-cd android
-if ! ./gradlew test --quiet 2>/dev/null; then
-  echo "⚠️ Unit tests are failing after this edit."
+if [[ "$FILE_PATH" == */test/* || "$FILE_PATH" == */androidTest/* ]]; then
+  if [ $EXIT_CODE -ne 0 ]; then
+    echo '{"systemMessage": "🔴 RED confirmed. Test fails as expected."}'
+  else
+    echo '{"systemMessage": "⚠️ Test PASSES already — rewrite it."}'
+  fi
+else
+  if [ $EXIT_CODE -eq 0 ]; then
+    echo '{"systemMessage": "🟢 GREEN confirmed. Tests pass."}'
+  else
+    echo '{"systemMessage": "❌ Tests FAILED. Fix before proceeding."}'
+  fi
 fi
 
 exit 0
