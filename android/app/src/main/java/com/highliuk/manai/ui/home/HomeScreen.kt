@@ -45,7 +45,7 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("慢愛") },
+                title = { Text("Man AI") },
                 actions = {
                     IconButton(onClick = onSettingsClick) {
                         Icon(

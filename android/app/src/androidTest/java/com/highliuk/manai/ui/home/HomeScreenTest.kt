@@ -25,7 +25,7 @@ class HomeScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithText("慢愛").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Man AI").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Import PDF").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Settings").assertIsDisplayed()
     }
