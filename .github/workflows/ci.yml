@@ -30,6 +30,9 @@ jobs:
       - name: Build debug APK
         run: ./gradlew assembleDebug
 
+      - name: Run detekt
+        run: ./gradlew detekt
+
       - name: Run unit tests
         run: ./gradlew test
 

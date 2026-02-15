@@ -19,6 +19,14 @@ cd android
 ./gradlew assembleDebug
 ```
 
+### Claude Code setup
+
+After cloning, run the detekt CLI setup for the static analysis hook:
+
+```bash
+scripts/setup-detekt.sh
+```
+
 ## Architecture
 
 MVVM + Clean Architecture with Kotlin, Jetpack Compose, Hilt, Room, and Coroutines/Flow.

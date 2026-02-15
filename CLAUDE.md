@@ -35,6 +35,9 @@ RULES:
 - **`android.util.Log` is NOT available in unit tests** — never use it in ViewModels or domain logic
 - **Visibility for testability**: if a function needs testing but is `private`, make it `internal`
 - **Tests MUST import and call REAL code** — a test that recreates logic without importing the source is worthless
+- **detekt** for static analysis — runs automatically via Claude Code hook on every `.kt` file edit
+- `./gradlew detekt` for full project analysis with type resolution (CI gate)
+- Zero tolerance: `maxIssues = 0` — all violations must be fixed, not suppressed (unless confirmed false positive)
 
 ## Architecture
 

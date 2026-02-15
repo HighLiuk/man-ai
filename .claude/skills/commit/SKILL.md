@@ -14,6 +14,7 @@ Create atomic git commits for the current changes.
 - Commit message style: imperative mood, concise first line (< 72 chars)
 - Always end with `Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>`
 - Do NOT push unless the user explicitly asks
+- Before committing, verify `./gradlew detekt` passes (the PostToolUse hook catches issues per-file, but run full project detekt before commit as final check)
 
 ## Steps
 

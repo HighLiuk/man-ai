@@ -27,6 +27,8 @@ Read(file_path="/private/tmp/.../tasks/<task_id>.output")
 ./gradlew test                   # Unit tests
 ./gradlew connectedAndroidTest   # Instrumented tests (needs device/emulator)
 ./gradlew test --tests "com.highliuk.manai.SomeTest.someMethod"  # Single test
+./gradlew detekt                  # Static analysis (full project, type resolution)
+./gradlew detektGenerateConfig    # Regenerate default detekt config
 ./gradlew lint                   # Android lint
 ./gradlew ktlintCheck            # Check Kotlin style
 ./gradlew ktlintFormat           # Auto-fix Kotlin style
