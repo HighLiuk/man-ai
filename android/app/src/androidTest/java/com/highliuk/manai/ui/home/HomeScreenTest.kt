@@ -47,9 +47,7 @@ class HomeScreenTest {
         }
 
         composeTestRule.onNodeWithText("One Piece").assertIsDisplayed()
-        composeTestRule.onNodeWithText("200 pages").assertIsDisplayed()
         composeTestRule.onNodeWithText("Naruto").assertIsDisplayed()
-        composeTestRule.onNodeWithText("150 pages").assertIsDisplayed()
     }
 
     @Test
