@@ -7,6 +7,7 @@ An Android manga reader with on-device AI-powered text detection, OCR, and trans
 ## Features
 
 - **Manga library** — Homepage displaying imported manga with cover thumbnails
+- **PDF reader** — Fullscreen page viewer with swipe navigation and overlay controls
 
 ## Requirements
 

@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2026-02-15
+
+### Added
+
+- PDF reader screen with page viewer and swipe navigation
+- Fullscreen reader with overlay TopAppBar and FillWidth scaling
+- Tap manga in library to open reader
+- Reading progress persistence with automatic save (debounced)
+- Resume reading from last saved page
+- Detekt static analysis with zero-tolerance CI gate
+- Instrumented tests in CI and release workflows
+- Release signing configuration
+
+### Fixed
+
+- HomeScreenTest assertions after page count model changes
+
 ## [0.1.0] - 2026-02-15
 
 ### Added
