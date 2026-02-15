@@ -11,6 +11,10 @@
     <string name="grid_columns">Grid Columns</string>
     <string name="n_columns">%d columns</string>
 
+    <!-- Reader screen -->
+    <string name="reader_settings">Reader settings</string>
+    <string name="page_content">Page %d</string>
+
     <!-- PDF thumbnail -->
     <string name="pdf_thumbnail">PDF thumbnail</string>
     <string name="pdf_placeholder">PDF placeholder</string>
