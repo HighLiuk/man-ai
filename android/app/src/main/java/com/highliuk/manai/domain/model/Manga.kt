@@ -4,5 +4,6 @@ data class Manga(
     val id: Long = 0L,
     val uri: String,
     val title: String,
-    val pageCount: Int
+    val pageCount: Int,
+    val lastReadPage: Int = 0
 )

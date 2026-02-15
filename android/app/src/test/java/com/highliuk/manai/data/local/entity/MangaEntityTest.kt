@@ -48,4 +48,46 @@ class MangaEntityTest {
 
         assertEquals(0L, entity.id)
     }
+
+    @Test
+    fun `toManga maps lastReadPage`() {
+        val entity = MangaEntity(
+            id = 1L,
+            uri = "content://test.pdf",
+            title = "Test Manga",
+            pageCount = 42,
+            lastReadPage = 15
+        )
+
+        val manga = entity.toManga()
+
+        assertEquals(15, manga.lastReadPage)
+    }
+
+    @Test
+    fun `fromManga maps lastReadPage`() {
+        val manga = Manga(
+            id = 1L,
+            uri = "content://test.pdf",
+            title = "Test Manga",
+            pageCount = 42,
+            lastReadPage = 7
+        )
+
+        val entity = MangaEntity.fromManga(manga)
+
+        assertEquals(7, entity.lastReadPage)
+    }
+
+    @Test
+    fun `lastReadPage defaults to zero`() {
+        val entity = MangaEntity(
+            id = 1L,
+            uri = "content://test.pdf",
+            title = "Test Manga",
+            pageCount = 42
+        )
+
+        assertEquals(0, entity.toManga().lastReadPage)
+    }
 }

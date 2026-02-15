@@ -18,6 +18,7 @@ object DatabaseModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): ManAiDatabase =
         Room.databaseBuilder(context, ManAiDatabase::class.java, "manai.db")
+            .addMigrations(ManAiDatabase.MIGRATION_1_2)
             .build()
 
     @Provides

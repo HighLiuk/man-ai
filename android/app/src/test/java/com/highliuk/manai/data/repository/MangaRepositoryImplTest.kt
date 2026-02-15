@@ -66,4 +66,11 @@ class MangaRepositoryImplTest {
             })
         }
     }
+
+    @Test
+    fun `updateLastReadPage delegates to dao`() = runTest {
+        repository.updateLastReadPage(1L, 42)
+
+        coVerify { dao.updateLastReadPage(1L, 42) }
+    }
 }

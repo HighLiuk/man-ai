@@ -80,4 +80,28 @@ class MangaDaoTest {
         val result = dao.getAll().first()
         assertEquals(3, result.size)
     }
+
+    @Test
+    fun updateLastReadPage_persistsPage() = runTest {
+        dao.insert(MangaEntity(uri = "content://test", title = "Test", pageCount = 100))
+        val id = dao.getAll().first()[0].id
+
+        dao.updateLastReadPage(id, 42)
+
+        val result = dao.getById(id).first()
+        assertEquals(42, result?.lastReadPage)
+    }
+
+    @Test
+    fun updateLastReadPage_doesNotAffectOtherFields() = runTest {
+        dao.insert(MangaEntity(uri = "content://test", title = "Test", pageCount = 100))
+        val id = dao.getAll().first()[0].id
+
+        dao.updateLastReadPage(id, 10)
+
+        val result = dao.getById(id).first()
+        assertEquals("Test", result?.title)
+        assertEquals(100, result?.pageCount)
+        assertEquals("content://test", result?.uri)
+    }
 }

@@ -1,5 +1,6 @@
 package com.highliuk.manai.data.local.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -14,13 +15,16 @@ data class MangaEntity(
     val id: Long = 0L,
     val uri: String,
     val title: String,
-    val pageCount: Int
+    val pageCount: Int,
+    @ColumnInfo(defaultValue = "0")
+    val lastReadPage: Int = 0
 ) {
     fun toManga(): Manga = Manga(
         id = id,
         uri = uri,
         title = title,
-        pageCount = pageCount
+        pageCount = pageCount,
+        lastReadPage = lastReadPage
     )
 
     companion object {
@@ -28,7 +32,8 @@ data class MangaEntity(
             id = manga.id,
             uri = manga.uri,
             title = manga.title,
-            pageCount = manga.pageCount
+            pageCount = manga.pageCount,
+            lastReadPage = manga.lastReadPage
         )
     }
 }

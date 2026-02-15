@@ -23,4 +23,8 @@ class MangaRepositoryImpl @Inject constructor(
     override suspend fun insertManga(manga: Manga) {
         mangaDao.insert(MangaEntity.fromManga(manga))
     }
+
+    override suspend fun updateLastReadPage(id: Long, page: Int) {
+        mangaDao.updateLastReadPage(id, page)
+    }
 }

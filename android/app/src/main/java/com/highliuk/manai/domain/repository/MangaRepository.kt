@@ -7,4 +7,5 @@ interface MangaRepository {
     fun getAllManga(): Flow<List<Manga>>
     fun getMangaById(id: Long): Flow<Manga?>
     suspend fun insertManga(manga: Manga)
+    suspend fun updateLastReadPage(id: Long, page: Int)
 }
