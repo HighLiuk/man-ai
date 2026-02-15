@@ -38,3 +38,14 @@ For EACH bug fix, follow this cycle internally. Do NOT combine steps.
 - **Everything is testable.** Navigation, Hilt wiring, DB queries — all of it. "Hard to test" means "requires more setup", not "skip the test".
 - If you realize you wrote production code first, DELETE IT, write the test,
   verify RED, then rewrite the production code
+
+## Final verification (after GREEN)
+
+Before declaring the bug fixed, run the **full** test suite — both unit AND instrumented:
+
+```bash
+cd android && ./gradlew testDebugUnitTest
+cd android && ./gradlew connectedDebugAndroidTest
+```
+
+A fix is NOT complete until both suites are green. Unit tests alone miss Compose UI regressions.

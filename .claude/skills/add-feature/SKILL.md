@@ -49,9 +49,20 @@ fun importPdf_showsInLibrary() {
 Run: `cd android && ./gradlew connectedDebugAndroidTest`
 If RED → fix production code and re-run until GREEN.
 
+## Phase 2.5: Full regression check
+
+After E2E tests pass, run the **complete** test suite to catch regressions:
+
+```bash
+cd android && ./gradlew testDebugUnitTest
+cd android && ./gradlew connectedDebugAndroidTest
+```
+
+Both must be green. Unit tests alone miss Compose UI regressions. Do NOT proceed to smoke test until both suites pass.
+
 ## Phase 3: Manual Smoke Test
 
-After E2E tests pass:
+After all tests pass:
 
 1. Install the app: `adb install -r android/app/build/outputs/apk/debug/app-debug.apk`
 2. Launch: `adb shell am start -n com.highliuk.manai/.MainActivity`
