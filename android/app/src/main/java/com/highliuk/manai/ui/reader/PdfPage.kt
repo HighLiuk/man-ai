@@ -47,7 +47,7 @@ fun PdfPage(uri: String, pageIndex: Int, modifier: Modifier = Modifier) {
             bitmap = bitmap.value!!.asImageBitmap(),
             contentDescription = stringResource(R.string.page_content, pageIndex + 1),
             modifier = modifier,
-            contentScale = ContentScale.Fit
+            contentScale = ContentScale.FillWidth
         )
     } else {
         Box(

@@ -1,10 +1,13 @@
 package com.highliuk.manai.ui.reader
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTopPositionInRootIsEqualTo
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.dp
 import com.highliuk.manai.domain.model.Manga
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -66,5 +69,21 @@ class ReaderScreenTest {
 
         composeTestRule.onNodeWithContentDescription("Reader settings").performClick()
         assertTrue(settingsCalled)
+    }
+
+    @Test
+    fun pagerStartsAtTopOfScreen_overlayTopBar() {
+        composeTestRule.setContent {
+            ReaderScreen(
+                manga = testManga,
+                currentPage = 0,
+                onPageChanged = {},
+                onBack = {},
+                onSettingsClick = {}
+            )
+        }
+
+        composeTestRule.onNodeWithTag("reader_pager")
+            .assertTopPositionInRootIsEqualTo(0.dp)
     }
 }
