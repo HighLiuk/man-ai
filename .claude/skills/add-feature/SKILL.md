@@ -5,13 +5,19 @@ description: Add a feature using strict TDD with E2E verification. Use when impl
 
 # Add Feature — Full TDD + E2E Verification
 
-## Phase 1: Unit-level TDD
+## Phase 1: TDD for EVERY task
 
 For each task in the plan, complete a RED-GREEN-REFACTOR cycle:
 
-1. Write failing unit test → run `cd android && ./gradlew test` → verify RED
+1. Write failing test → **run it** → verify RED with visible failure output
 2. Write minimum production code → run tests → verify GREEN
 3. Refactor if needed
+
+**Critical rules:**
+- **Every task gets a test. No exceptions.** "Not easily testable" means "requires more setup" — do the setup.
+- **RED means you SAW the failure.** Compilation alone is not RED. For instrumented tests, run on emulator with `connectedDebugAndroidTest` and show the assertion error.
+- **If the plan says "not testable", the plan is wrong.** Fix the plan, don't skip the test.
+- Navigation, Hilt wiring, DB queries — all testable. Use `@HiltAndroidTest`, `TestDatabaseModule`, `createAndroidComposeRule<MainActivity>()` as needed.
 
 ## Phase 2: E2E Test (after all unit-level tasks are done)
 

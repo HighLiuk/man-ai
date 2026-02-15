@@ -9,14 +9,16 @@ For EACH bug fix, follow this cycle internally. Do NOT combine steps.
 
 ## For each fix:
 
-### 1. RED — Write the failing test
+### 1. RED — Write the failing test and RUN IT
 
 - Write a test that reproduces the bug
 - Choose the right test level:
   - Logic bug → unit test with `cd android && ./gradlew test`
   - Device/permission/UI bug → instrumented test with `cd android && ./gradlew connectedDebugAndroidTest`
-- Verify the test FAILS. If it passes, the test is wrong — rewrite it.
-- Log the failure output.
+- **RUN the test and show the failure output.** A RED you didn't execute is not a RED.
+- Compilation failure counts as RED only for unit tests. For instrumented tests, you MUST run on emulator.
+- If the test passes, the test is wrong — rewrite it.
+- If the test needs extra setup (Hilt `TestDatabaseModule`, `@HiltAndroidTest`, etc.), do the setup — don't skip the test.
 
 ### 2. GREEN — Minimal fix
 
@@ -31,6 +33,8 @@ For EACH bug fix, follow this cycle internally. Do NOT combine steps.
 ## Rules
 
 - NEVER write production code before its test exists and has been shown RED
+- **RED means visible failure output.** Not "it would fail" — you must see the error.
 - Each task in the plan = one RED-GREEN-REFACTOR cycle
+- **Everything is testable.** Navigation, Hilt wiring, DB queries — all of it. "Hard to test" means "requires more setup", not "skip the test".
 - If you realize you wrote production code first, DELETE IT, write the test,
   verify RED, then rewrite the production code
