@@ -9,11 +9,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.highliuk.manai.ui.home.HomeScreen
 import com.highliuk.manai.ui.home.HomeViewModel
+import com.highliuk.manai.ui.reader.ReaderScreen
+import com.highliuk.manai.ui.reader.ReaderViewModel
 import com.highliuk.manai.ui.settings.SettingsScreen
 import com.highliuk.manai.ui.settings.SettingsViewModel
 
@@ -60,8 +64,27 @@ fun ManAiNavHost(
                 mangaList = mangaList,
                 gridColumns = gridColumns,
                 onImportClick = onImportClick,
-                onSettingsClick = { navController.navigate("settings") }
+                onSettingsClick = { navController.navigate("settings") },
+                onMangaClick = { manga -> navController.navigate("reader/${manga.id}") }
             )
+        }
+        composable(
+            "reader/{mangaId}",
+            arguments = listOf(navArgument("mangaId") { type = NavType.LongType })
+        ) {
+            val viewModel: ReaderViewModel = hiltViewModel()
+            val manga by viewModel.manga.collectAsState()
+            val currentPage by viewModel.currentPage.collectAsState()
+
+            manga?.let { m ->
+                ReaderScreen(
+                    manga = m,
+                    currentPage = currentPage,
+                    onPageChanged = viewModel::onPageChanged,
+                    onBack = { navController.popBackStack() },
+                    onSettingsClick = { navController.navigate("settings") }
+                )
+            }
         }
         composable("settings") {
             val viewModel: SettingsViewModel = hiltViewModel()

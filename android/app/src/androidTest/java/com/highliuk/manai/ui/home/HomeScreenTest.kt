@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.highliuk.manai.domain.model.Manga
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -65,6 +66,24 @@ class HomeScreenTest {
 
         composeTestRule.onNodeWithContentDescription("Import PDF").performClick()
         assertTrue(clicked)
+    }
+
+    @Test
+    fun tappingMangaGridItem_callsOnMangaClick() {
+        val manga = Manga(id = 1, uri = "uri1", title = "One Piece", pageCount = 200)
+        var clickedManga: Manga? = null
+
+        composeTestRule.setContent {
+            HomeScreen(
+                mangaList = listOf(manga),
+                onImportClick = {},
+                onSettingsClick = {},
+                onMangaClick = { clickedManga = it }
+            )
+        }
+
+        composeTestRule.onNodeWithText("One Piece").performClick()
+        assertEquals(manga, clickedManga)
     }
 
     @Test

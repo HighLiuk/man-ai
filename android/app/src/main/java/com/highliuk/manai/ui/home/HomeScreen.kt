@@ -1,6 +1,7 @@
 package com.highliuk.manai.ui.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -42,7 +43,8 @@ fun HomeScreen(
     mangaList: List<Manga>,
     gridColumns: Int = 2,
     onImportClick: () -> Unit,
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
+    onMangaClick: (Manga) -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -77,19 +79,20 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(mangaList, key = { it.id }) { manga ->
-                MangaGridItem(manga = manga)
+                MangaGridItem(manga = manga, onClick = { onMangaClick(manga) })
             }
         }
     }
 }
 
 @Composable
-fun MangaGridItem(manga: Manga) {
+fun MangaGridItem(manga: Manga, onClick: () -> Unit = {}) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(2f / 3f)
             .clip(RoundedCornerShape(8.dp))
+            .clickable { onClick() }
     ) {
         PdfThumbnail(
             uri = manga.uri,
