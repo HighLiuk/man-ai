@@ -45,6 +45,7 @@ class ManAiNavHostTest {
         composeTestRule.waitForIdle()
         // Top bar is hidden by default, tap to show it
         composeTestRule.onNodeWithTag("reader_pager").performClick()
+        composeTestRule.mainClock.advanceTimeBy(500)
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithContentDescription("Back").assertIsDisplayed()
     }
@@ -60,6 +61,7 @@ class ManAiNavHostTest {
         composeTestRule.waitForIdle()
         // Top bar is hidden by default, tap to show it
         composeTestRule.onNodeWithTag("reader_pager").performClick()
+        composeTestRule.mainClock.advanceTimeBy(500)
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithContentDescription("Reader settings").assertIsDisplayed()
     }

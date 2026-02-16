@@ -9,7 +9,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
+import androidx.compose.ui.test.swipeRight
 import com.highliuk.manai.domain.model.Manga
+import com.highliuk.manai.domain.model.ReadingMode
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -176,5 +178,43 @@ class ReaderScreenTest {
             .performTouchInput { swipeLeft() }
         composeTestRule.waitForIdle()
         assertEquals(1, lastPage)
+    }
+
+    @Test
+    fun swipeRight_changesPage_inRtlMode() {
+        lastPage = 0
+        composeTestRule.setContent {
+            ReaderScreen(
+                manga = testManga,
+                currentPage = 0,
+                readingMode = ReadingMode.RTL,
+                onPageChanged = { lastPage = it },
+                onBack = {},
+                onSettingsClick = {}
+            )
+        }
+        composeTestRule.onNodeWithTag("reader_pager")
+            .performTouchInput { swipeRight() }
+        composeTestRule.waitForIdle()
+        assertEquals(1, lastPage)
+    }
+
+    @Test
+    fun swipeLeft_doesNotAdvancePage_inRtlMode() {
+        lastPage = 0
+        composeTestRule.setContent {
+            ReaderScreen(
+                manga = testManga,
+                currentPage = 0,
+                readingMode = ReadingMode.RTL,
+                onPageChanged = { lastPage = it },
+                onBack = {},
+                onSettingsClick = {}
+            )
+        }
+        composeTestRule.onNodeWithTag("reader_pager")
+            .performTouchInput { swipeLeft() }
+        composeTestRule.waitForIdle()
+        assertEquals(0, lastPage)
     }
 }
