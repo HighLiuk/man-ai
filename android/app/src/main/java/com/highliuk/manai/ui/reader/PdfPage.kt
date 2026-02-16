@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,7 +22,12 @@ import androidx.compose.ui.res.stringResource
 import com.highliuk.manai.R
 
 @Composable
-fun PdfPage(uri: String, pageIndex: Int, modifier: Modifier = Modifier) {
+fun PdfPage(
+    uri: String,
+    pageIndex: Int,
+    modifier: Modifier = Modifier,
+    onBitmapLoaded: ((width: Int, height: Int) -> Unit)? = null
+) {
     val context = LocalContext.current
     val bitmap = produceState<Bitmap?>(initialValue = null, uri, pageIndex) {
         value = try {
@@ -39,6 +45,12 @@ fun PdfPage(uri: String, pageIndex: Int, modifier: Modifier = Modifier) {
             }
         } catch (_: Exception) {
             null
+        }
+    }
+
+    LaunchedEffect(bitmap.value) {
+        bitmap.value?.let { bmp ->
+            onBitmapLoaded?.invoke(bmp.width, bmp.height)
         }
     }
 

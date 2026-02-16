@@ -133,6 +133,46 @@ class ReaderGestureStateTest {
     }
 
     @Test
+    fun `onPan clamps Y offset to image edge when image is shorter than container`() {
+        val state = ReaderGestureState()
+        state.setContentSize(1000f, 1500f)
+        state.onZoom(2f)
+        // container 1000x2000, rendered image 1000x1500 (FillWidth)
+        // maxOffsetY = max(0, 2 * 1500/2 - 2000/2) = 500
+        state.onPan(0f, 9999f, 1000f, 2000f)
+        assertEquals(500f, state.offsetY, 0.001f)
+    }
+
+    @Test
+    fun `onPan clamps negative Y offset to image edge when image is shorter than container`() {
+        val state = ReaderGestureState()
+        state.setContentSize(1000f, 1500f)
+        state.onZoom(2f)
+        state.onPan(0f, -9999f, 1000f, 2000f)
+        assertEquals(-500f, state.offsetY, 0.001f)
+    }
+
+    @Test
+    fun `onPan X offset unchanged when image fills width`() {
+        val state = ReaderGestureState()
+        state.setContentSize(1000f, 1500f)
+        state.onZoom(2f)
+        // X: FillWidth → renderedWidth = containerWidth → same formula
+        // maxOffsetX = 1000 * (2-1) / 2 = 500
+        state.onPan(9999f, 0f, 1000f, 2000f)
+        assertEquals(500f, state.offsetX, 0.001f)
+    }
+
+    @Test
+    fun `onPan without content size uses container bounds`() {
+        val state = ReaderGestureState()
+        state.onZoom(2f)
+        state.onPan(9999f, 9999f, 1000f, 2000f)
+        assertEquals(500f, state.offsetX, 0.001f)
+        assertEquals(1000f, state.offsetY, 0.001f)
+    }
+
+    @Test
     fun `zoom back to 1f resets offsets`() {
         val state = ReaderGestureState()
         state.onZoom(2f)

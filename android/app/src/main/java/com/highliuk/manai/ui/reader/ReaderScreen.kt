@@ -71,6 +71,9 @@ fun ReaderScreen(
             PdfPage(
                 uri = manga.uri,
                 pageIndex = pageIndex,
+                onBitmapLoaded = { w, h ->
+                    gestureState.setContentSize(w.toFloat(), h.toFloat())
+                },
                 modifier = Modifier
                     .fillMaxSize()
                     .testTag("reader_zoom_container")

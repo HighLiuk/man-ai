@@ -18,8 +18,16 @@ class ReaderGestureState {
     var offsetY by mutableFloatStateOf(0f)
         private set
 
+    private var contentWidth = 0f
+    private var contentHeight = 0f
+
     val isZoomed: Boolean
         get() = scale > 1f
+
+    fun setContentSize(width: Float, height: Float) {
+        contentWidth = width
+        contentHeight = height
+    }
 
     fun toggleBars() {
         areBarsVisible = !areBarsVisible
@@ -39,10 +47,17 @@ class ReaderGestureState {
         offsetY = 0f
     }
 
-    fun onPan(panX: Float, panY: Float, pageWidth: Float, pageHeight: Float) {
+    fun onPan(panX: Float, panY: Float, containerWidth: Float, containerHeight: Float) {
         if (!isZoomed) return
-        val maxOffsetX = pageWidth * (scale - 1f) / 2f
-        val maxOffsetY = pageHeight * (scale - 1f) / 2f
+        val maxOffsetX = containerWidth * (scale - 1f) / 2f
+
+        val maxOffsetY = if (contentWidth > 0f && contentHeight > 0f) {
+            val renderedImageHeight = containerWidth * contentHeight / contentWidth
+            (scale * renderedImageHeight / 2f - containerHeight / 2f).coerceAtLeast(0f)
+        } else {
+            containerHeight * (scale - 1f) / 2f
+        }
+
         offsetX = (offsetX + panX).coerceIn(-maxOffsetX, maxOffsetX)
         offsetY = (offsetY + panY).coerceIn(-maxOffsetY, maxOffsetY)
     }
