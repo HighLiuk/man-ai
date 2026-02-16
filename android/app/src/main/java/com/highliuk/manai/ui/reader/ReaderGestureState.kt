@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
 class ReaderGestureState {
-    var isTopBarVisible by mutableStateOf(false)
+    var areBarsVisible by mutableStateOf(false)
         private set
 
     var scale by mutableFloatStateOf(1f)
@@ -21,8 +21,8 @@ class ReaderGestureState {
     val isZoomed: Boolean
         get() = scale > 1f
 
-    fun toggleTopBar() {
-        isTopBarVisible = !isTopBarVisible
+    fun toggleBars() {
+        areBarsVisible = !areBarsVisible
     }
 
     fun onZoom(zoomChange: Float) {
