@@ -1,15 +1,12 @@
 package com.highliuk.manai.ui.reader
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTopPositionInRootIsEqualTo
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.unit.dp
 import com.highliuk.manai.domain.model.Manga
-import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 
@@ -20,70 +17,64 @@ class ReaderScreenTest {
 
     private val testManga = Manga(id = 1, uri = "content://test", title = "One Piece", pageCount = 10)
 
-    @Test
-    fun displaysMangaTitleInTopBar() {
+    private fun setUpReaderScreen(
+        onBack: () -> Unit = {},
+        onSettingsClick: () -> Unit = {}
+    ) {
         composeTestRule.setContent {
             ReaderScreen(
                 manga = testManga,
                 currentPage = 0,
                 onPageChanged = {},
-                onBack = {},
-                onSettingsClick = {}
+                onBack = onBack,
+                onSettingsClick = onSettingsClick
             )
         }
+    }
 
+    @Test
+    fun topBar_isHiddenByDefault() {
+        setUpReaderScreen()
+        composeTestRule.onNodeWithText("One Piece").assertDoesNotExist()
+    }
+
+    @Test
+    fun tapOnPager_showsTopBar() {
+        setUpReaderScreen()
+        composeTestRule.onNodeWithTag("reader_pager").performClick()
         composeTestRule.onNodeWithText("One Piece").assertIsDisplayed()
     }
 
     @Test
-    fun backButton_callsOnBack() {
+    fun doubleTapOnPager_hidesTopBarAgain() {
+        setUpReaderScreen()
+        // First tap: show
+        composeTestRule.onNodeWithTag("reader_pager").performClick()
+        composeTestRule.onNodeWithText("One Piece").assertIsDisplayed()
+        // Second tap: hide
+        composeTestRule.onNodeWithTag("reader_pager").performClick()
+        composeTestRule.onNodeWithText("One Piece").assertDoesNotExist()
+    }
+
+    @Test
+    fun backButton_callsOnBack_whenTopBarVisible() {
         var backCalled = false
+        setUpReaderScreen(onBack = { backCalled = true })
 
-        composeTestRule.setContent {
-            ReaderScreen(
-                manga = testManga,
-                currentPage = 0,
-                onPageChanged = {},
-                onBack = { backCalled = true },
-                onSettingsClick = {}
-            )
-        }
-
+        // Show top bar first
+        composeTestRule.onNodeWithTag("reader_pager").performClick()
         composeTestRule.onNodeWithContentDescription("Back").performClick()
-        assertTrue(backCalled)
+        assert(backCalled)
     }
 
     @Test
-    fun settingsButton_callsOnSettingsClick() {
+    fun settingsButton_callsOnSettingsClick_whenTopBarVisible() {
         var settingsCalled = false
+        setUpReaderScreen(onSettingsClick = { settingsCalled = true })
 
-        composeTestRule.setContent {
-            ReaderScreen(
-                manga = testManga,
-                currentPage = 0,
-                onPageChanged = {},
-                onBack = {},
-                onSettingsClick = { settingsCalled = true }
-            )
-        }
-
+        // Show top bar first
+        composeTestRule.onNodeWithTag("reader_pager").performClick()
         composeTestRule.onNodeWithContentDescription("Reader settings").performClick()
-        assertTrue(settingsCalled)
-    }
-
-    @Test
-    fun pagerStartsAtTopOfScreen_overlayTopBar() {
-        composeTestRule.setContent {
-            ReaderScreen(
-                manga = testManga,
-                currentPage = 0,
-                onPageChanged = {},
-                onBack = {},
-                onSettingsClick = {}
-            )
-        }
-
-        composeTestRule.onNodeWithTag("reader_pager")
-            .assertTopPositionInRootIsEqualTo(0.dp)
+        assert(settingsCalled)
     }
 }

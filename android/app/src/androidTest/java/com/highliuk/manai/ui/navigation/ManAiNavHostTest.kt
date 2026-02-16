@@ -3,6 +3,7 @@ package com.highliuk.manai.ui.navigation
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.highliuk.manai.MainActivity
@@ -42,6 +43,9 @@ class ManAiNavHostTest {
         composeTestRule.onNodeWithText("Nav Test Manga").performClick()
 
         composeTestRule.waitForIdle()
+        // Top bar is hidden by default, tap to show it
+        composeTestRule.onNodeWithTag("reader_pager").performClick()
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithContentDescription("Back").assertIsDisplayed()
     }
 
@@ -53,6 +57,9 @@ class ManAiNavHostTest {
         composeTestRule.onNodeWithText("Reader Title Test").assertIsDisplayed()
         composeTestRule.onNodeWithText("Reader Title Test").performClick()
 
+        composeTestRule.waitForIdle()
+        // Top bar is hidden by default, tap to show it
+        composeTestRule.onNodeWithTag("reader_pager").performClick()
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithContentDescription("Reader settings").assertIsDisplayed()
     }
