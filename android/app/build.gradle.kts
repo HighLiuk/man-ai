@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.room)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.kover)
 }
 
 android {
@@ -82,6 +83,45 @@ detekt {
     allRules = true
     config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
     basePath = projectDir.absolutePath
+}
+
+kover {
+    reports {
+        filters {
+            excludes {
+                androidGeneratedClasses()
+                classes(
+                    // Hilt
+                    "dagger.hilt.*",
+                    "hilt_aggregated_deps.*",
+                    "*_HiltModules*",
+                    "*_Factory",
+                    "*_MembersInjector",
+                    "*_GeneratedInjector",
+                    "*Hilt_*",
+                    // Room
+                    "*_Impl",
+                    "*_Impl$*",
+                    // Navigation
+                    "*ComposableSingletons*",
+                    // App
+                    "*.ManAiApplication",
+                )
+                annotatedBy(
+                    "*Generated*",
+                    "*Composable*",
+                )
+            }
+        }
+
+        variant("debug") {
+            verify {
+                rule {
+                    minBound(80)
+                }
+            }
+        }
+    }
 }
 
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
