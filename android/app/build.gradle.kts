@@ -104,8 +104,20 @@ kover {
                     "*_Impl$*",
                     // Navigation
                     "*ComposableSingletons*",
-                    // App
+                    // App entry points
                     "*.ManAiApplication",
+                    "*.MainActivity",
+                    // DI modules (pure Hilt wiring)
+                    "*.di.*",
+                    // Android-dependent implementations
+                    "*.AndroidPdfMetadataExtractor",
+                    // Room database abstract class
+                    "*.ManAiDatabase",
+                    "*.ManAiDatabase$*",
+                    // Theme color scheme initializations
+                    "*.ui.theme.*",
+                    // Private companion synthetic getters (unreachable from tests)
+                    "*.UserPreferencesRepositoryImpl${'$'}Companion",
                 )
                 annotatedBy(
                     "*Generated*",
@@ -115,9 +127,17 @@ kover {
         }
 
         variant("debug") {
+            log {
+                header = "Coverage (Kover engine):"
+                format = "  <entity> — <value>%"
+                groupBy = kotlinx.kover.gradle.plugin.dsl.GroupingEntityType.CLASS
+                coverageUnits = kotlinx.kover.gradle.plugin.dsl.CoverageUnit.LINE
+                aggregationForGroup = kotlinx.kover.gradle.plugin.dsl.AggregationType.COVERED_PERCENTAGE
+            }
+
             verify {
                 rule {
-                    minBound(80)
+                    minBound(100)
                 }
             }
         }

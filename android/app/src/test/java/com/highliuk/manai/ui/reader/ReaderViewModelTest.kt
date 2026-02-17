@@ -152,6 +152,24 @@ class ReaderViewModelTest {
     }
 
     @Test
+    fun `onCleared persists current page`() = runTest(testDispatcher) {
+        val manga = Manga(id = 1, uri = "uri1", title = "Test", pageCount = 100)
+        coEvery { repository.getMangaById(1L) } returns flowOf(manga)
+
+        val viewModel = createViewModel(1L)
+        testScheduler.advanceUntilIdle()
+
+        viewModel.onPageChanged(7)
+
+        val onClearedMethod = viewModel.javaClass.getDeclaredMethod("onCleared")
+        onClearedMethod.isAccessible = true
+        onClearedMethod.invoke(viewModel)
+        testScheduler.advanceUntilIdle()
+
+        coVerify { repository.updateLastReadPage(1L, 7) }
+    }
+
+    @Test
     fun `readingMode emits value from repository`() = runTest(testDispatcher) {
         coEvery { repository.getMangaById(1L) } returns flowOf(null)
         val viewModel = createViewModel(1L)
