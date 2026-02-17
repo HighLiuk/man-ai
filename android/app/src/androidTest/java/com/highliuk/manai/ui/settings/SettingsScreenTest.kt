@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.highliuk.manai.domain.model.ReadingMode
+import com.highliuk.manai.domain.model.ThemeMode
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -25,6 +26,8 @@ class SettingsScreenTest {
                 onGridColumnsChange = {},
                 readingMode = ReadingMode.LTR,
                 onReadingModeChange = {},
+                themeMode = ThemeMode.SYSTEM,
+                onThemeModeChange = {},
                 onBack = {}
             )
         }
@@ -44,6 +47,8 @@ class SettingsScreenTest {
                 onGridColumnsChange = { selectedColumns = it },
                 readingMode = ReadingMode.LTR,
                 onReadingModeChange = {},
+                themeMode = ThemeMode.SYSTEM,
+                onThemeModeChange = {},
                 onBack = {}
             )
         }
@@ -63,6 +68,8 @@ class SettingsScreenTest {
                 onGridColumnsChange = {},
                 readingMode = ReadingMode.LTR,
                 onReadingModeChange = {},
+                themeMode = ThemeMode.SYSTEM,
+                onThemeModeChange = {},
                 onBack = { backCalled = true }
             )
         }
@@ -81,6 +88,8 @@ class SettingsScreenTest {
                 onGridColumnsChange = {},
                 readingMode = ReadingMode.LTR,
                 onReadingModeChange = {},
+                themeMode = ThemeMode.SYSTEM,
+                onThemeModeChange = {},
                 onBack = {}
             )
         }
@@ -100,6 +109,8 @@ class SettingsScreenTest {
                 onGridColumnsChange = {},
                 readingMode = ReadingMode.LTR,
                 onReadingModeChange = { selectedMode = it },
+                themeMode = ThemeMode.SYSTEM,
+                onThemeModeChange = {},
                 onBack = {}
             )
         }
@@ -107,5 +118,46 @@ class SettingsScreenTest {
         composeTestRule.onNodeWithText("Right to Left (RTL)").performClick()
 
         assertEquals(ReadingMode.RTL, selectedMode)
+    }
+
+    @Test
+    fun displaysThemeModeSection() {
+        composeTestRule.setContent {
+            SettingsScreen(
+                gridColumns = 2,
+                onGridColumnsChange = {},
+                readingMode = ReadingMode.LTR,
+                onReadingModeChange = {},
+                themeMode = ThemeMode.SYSTEM,
+                onThemeModeChange = {},
+                onBack = {}
+            )
+        }
+
+        composeTestRule.onNodeWithText("Theme").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Light").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Dark").assertIsDisplayed()
+        composeTestRule.onNodeWithText("System").assertIsDisplayed()
+    }
+
+    @Test
+    fun clickingDarkThemeCallsCallback() {
+        var selectedTheme: ThemeMode? = null
+
+        composeTestRule.setContent {
+            SettingsScreen(
+                gridColumns = 2,
+                onGridColumnsChange = {},
+                readingMode = ReadingMode.LTR,
+                onReadingModeChange = {},
+                themeMode = ThemeMode.SYSTEM,
+                onThemeModeChange = { selectedTheme = it },
+                onBack = {}
+            )
+        }
+
+        composeTestRule.onNodeWithText("Dark").performClick()
+
+        assertEquals(ThemeMode.DARK, selectedTheme)
     }
 }

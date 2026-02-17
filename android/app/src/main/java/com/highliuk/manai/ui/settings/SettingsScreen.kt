@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.highliuk.manai.R
 import com.highliuk.manai.domain.model.ReadingMode
+import com.highliuk.manai.domain.model.ThemeMode
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,6 +32,8 @@ fun SettingsScreen(
     onGridColumnsChange: (Int) -> Unit,
     readingMode: ReadingMode,
     onReadingModeChange: (ReadingMode) -> Unit,
+    themeMode: ThemeMode,
+    onThemeModeChange: (ThemeMode) -> Unit,
     onBack: () -> Unit
 ) {
     Scaffold(
@@ -101,6 +104,35 @@ fun SettingsScreen(
                     )
                     Text(
                         text = label,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+            }
+
+            Text(
+                text = stringResource(R.string.theme_mode),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp)
+            )
+            ThemeMode.entries.forEach { mode ->
+                val themeLabel = when (mode) {
+                    ThemeMode.LIGHT -> stringResource(R.string.theme_mode_light)
+                    ThemeMode.DARK -> stringResource(R.string.theme_mode_dark)
+                    ThemeMode.SYSTEM -> stringResource(R.string.theme_mode_system)
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onThemeModeChange(mode) }
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = themeMode == mode,
+                        onClick = { onThemeModeChange(mode) }
+                    )
+                    Text(
+                        text = themeLabel,
                         modifier = Modifier.padding(start = 8.dp)
                     )
                 }

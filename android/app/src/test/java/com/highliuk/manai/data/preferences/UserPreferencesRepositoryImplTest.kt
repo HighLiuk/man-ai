@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.highliuk.manai.domain.model.ReadingMode
+import com.highliuk.manai.domain.model.ThemeMode
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -105,5 +106,43 @@ class UserPreferencesRepositoryImplTest {
         val repository = UserPreferencesRepositoryImpl(dataStore)
 
         assertEquals(ReadingMode.LTR, repository.readingMode.first())
+    }
+
+    @Test
+    fun `themeMode emits default value SYSTEM`() = runTest(testDispatcher) {
+        val repository = createRepository()
+
+        val result = repository.themeMode.first()
+
+        assertEquals(ThemeMode.SYSTEM, result)
+    }
+
+    @Test
+    fun `setThemeMode persists DARK value`() = runTest(testDispatcher) {
+        val repository = createRepository()
+
+        repository.setThemeMode(ThemeMode.DARK)
+
+        assertEquals(ThemeMode.DARK, repository.themeMode.first())
+    }
+
+    @Test
+    fun `setThemeMode persists LIGHT value`() = runTest(testDispatcher) {
+        val repository = createRepository()
+
+        repository.setThemeMode(ThemeMode.LIGHT)
+
+        assertEquals(ThemeMode.LIGHT, repository.themeMode.first())
+    }
+
+    @Test
+    fun `themeMode with invalid stored value defaults to SYSTEM`() = runTest(testDispatcher) {
+        val dataStore = createDataStore()
+        dataStore.edit { preferences ->
+            preferences[stringPreferencesKey("theme_mode")] = "INVALID"
+        }
+        val repository = UserPreferencesRepositoryImpl(dataStore)
+
+        assertEquals(ThemeMode.SYSTEM, repository.themeMode.first())
     }
 }

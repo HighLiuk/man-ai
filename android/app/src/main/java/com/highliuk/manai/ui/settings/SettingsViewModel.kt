@@ -3,6 +3,7 @@ package com.highliuk.manai.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.highliuk.manai.domain.model.ReadingMode
+import com.highliuk.manai.domain.model.ThemeMode
 import com.highliuk.manai.domain.repository.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,6 +32,15 @@ class SettingsViewModel @Inject constructor(
     fun setReadingMode(mode: ReadingMode) {
         viewModelScope.launch {
             userPreferencesRepository.setReadingMode(mode)
+        }
+    }
+
+    val themeMode: StateFlow<ThemeMode> = userPreferencesRepository.themeMode
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ThemeMode.SYSTEM)
+
+    fun setThemeMode(mode: ThemeMode) {
+        viewModelScope.launch {
+            userPreferencesRepository.setThemeMode(mode)
         }
     }
 }
