@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.swipeRight
@@ -197,6 +198,36 @@ class ReaderScreenTest {
             .performTouchInput { swipeRight() }
         composeTestRule.waitForIdle()
         assertEquals(1, lastPage)
+    }
+
+    @Test
+    fun goToPage_clampsAboveMax_toLastPage() {
+        setUpReaderScreen()
+        // Show bars
+        composeTestRule.onNodeWithTag("reader_pager").performClick()
+        advancePastDoubleTapTimeout()
+        // Tap page indicator to open dialog
+        composeTestRule.onNodeWithTag("page_indicator").performClick()
+        // Enter value above pageCount (10)
+        composeTestRule.onNodeWithTag("go_to_page_input").performTextInput("99")
+        composeTestRule.onNodeWithText("OK").performClick()
+        composeTestRule.waitForIdle()
+        assertEquals(9, lastPage)
+    }
+
+    @Test
+    fun goToPage_clampsBelowMin_toFirstPage() {
+        setUpReaderScreen()
+        // Show bars
+        composeTestRule.onNodeWithTag("reader_pager").performClick()
+        advancePastDoubleTapTimeout()
+        // Tap page indicator to open dialog
+        composeTestRule.onNodeWithTag("page_indicator").performClick()
+        // Enter 0 (below minimum of 1)
+        composeTestRule.onNodeWithTag("go_to_page_input").performTextInput("0")
+        composeTestRule.onNodeWithText("OK").performClick()
+        composeTestRule.waitForIdle()
+        assertEquals(0, lastPage)
     }
 
     @Test

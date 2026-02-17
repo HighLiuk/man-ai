@@ -4,6 +4,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 
@@ -58,6 +60,21 @@ class ReaderBottomBarTest {
             )
         }
         composeTestRule.onNodeWithTag("page_slider").assertDoesNotExist()
+    }
+
+    @Test
+    fun pageIndicator_callsOnPageIndicatorClick_whenTapped() {
+        var clicked = false
+        composeTestRule.setContent {
+            ReaderBottomBar(
+                currentPage = 0,
+                pageCount = 15,
+                onPageSelected = {},
+                onPageIndicatorClick = { clicked = true }
+            )
+        }
+        composeTestRule.onNodeWithTag("page_indicator").performClick()
+        assertTrue(clicked)
     }
 
     @Test

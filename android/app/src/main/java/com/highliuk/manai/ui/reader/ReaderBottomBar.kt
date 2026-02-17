@@ -1,6 +1,7 @@
 package com.highliuk.manai.ui.reader
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,11 +27,13 @@ import com.highliuk.manai.R
 import kotlin.math.roundToInt
 
 @Composable
+@Suppress("LongParameterList")
 fun ReaderBottomBar(
     currentPage: Int,
     pageCount: Int,
     isRtl: Boolean = false,
     onPageSelected: (Int) -> Unit,
+    onPageIndicatorClick: () -> Unit = {},
 ) {
     var isDragging by remember { mutableStateOf(false) }
     var dragValue by remember { mutableFloatStateOf(currentPage.toFloat()) }
@@ -46,7 +49,10 @@ fun ReaderBottomBar(
     ) {
         Text(
             text = stringResource(R.string.page_indicator, displayedPage, pageCount),
-            color = Color.White
+            color = Color.White,
+            modifier = Modifier
+                .clickable(onClick = onPageIndicatorClick)
+                .testTag("page_indicator")
         )
 
         if (pageCount > 1) {
