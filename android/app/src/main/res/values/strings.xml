@@ -14,6 +14,12 @@
     <string name="reading_mode_ltr">Left to Right (LTR)</string>
     <string name="reading_mode_rtl">Right to Left (RTL)</string>
 
+    <!-- Theme mode -->
+    <string name="theme_mode">Theme</string>
+    <string name="theme_mode_light">Light</string>
+    <string name="theme_mode_dark">Dark</string>
+    <string name="theme_mode_system">System</string>
+
     <!-- Reader screen -->
     <string name="reader_settings">Reader settings</string>
     <string name="page_content">Page %d</string>

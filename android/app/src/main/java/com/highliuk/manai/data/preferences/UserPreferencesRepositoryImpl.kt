@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.highliuk.manai.domain.model.ReadingMode
+import com.highliuk.manai.domain.model.ThemeMode
 import com.highliuk.manai.domain.repository.UserPreferencesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -23,6 +24,9 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
         val READING_MODE = stringPreferencesKey("reading_mode")
         val DEFAULT_READING_MODE = ReadingMode.LTR
+
+        val THEME_MODE = stringPreferencesKey("theme_mode")
+        val DEFAULT_THEME_MODE = ThemeMode.SYSTEM
     }
 
     override val gridColumns: Flow<Int> = dataStore.data.map { preferences ->
@@ -52,6 +56,25 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override suspend fun setReadingMode(mode: ReadingMode) {
         dataStore.edit { preferences ->
             preferences[READING_MODE] = mode.name
+        }
+    }
+
+    override val themeMode: Flow<ThemeMode> = dataStore.data.map { preferences ->
+        val stored = preferences[THEME_MODE]
+        if (stored != null) {
+            try {
+                ThemeMode.valueOf(stored)
+            } catch (_: IllegalArgumentException) {
+                DEFAULT_THEME_MODE
+            }
+        } else {
+            DEFAULT_THEME_MODE
+        }
+    }
+
+    override suspend fun setThemeMode(mode: ThemeMode) {
+        dataStore.edit { preferences ->
+            preferences[THEME_MODE] = mode.name
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.highliuk.manai.domain.repository
 
 import com.highliuk.manai.domain.model.ReadingMode
+import com.highliuk.manai.domain.model.ThemeMode
 import kotlinx.coroutines.flow.Flow
 
 interface UserPreferencesRepository {
@@ -9,4 +10,7 @@ interface UserPreferencesRepository {
 
     val readingMode: Flow<ReadingMode>
     suspend fun setReadingMode(mode: ReadingMode)
+
+    val themeMode: Flow<ThemeMode>
+    suspend fun setThemeMode(mode: ThemeMode)
 }

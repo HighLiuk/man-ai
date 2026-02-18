@@ -2,6 +2,7 @@ package com.highliuk.manai.ui.settings
 
 import app.cash.turbine.test
 import com.highliuk.manai.domain.model.ReadingMode
+import com.highliuk.manai.domain.model.ThemeMode
 import com.highliuk.manai.domain.repository.UserPreferencesRepository
 import io.mockk.coVerify
 import io.mockk.every
@@ -25,12 +26,14 @@ class SettingsViewModelTest {
     private val userPreferencesRepository = mockk<UserPreferencesRepository>(relaxed = true)
     private val gridColumnsFlow = MutableStateFlow(2)
     private val readingModeFlow = MutableStateFlow(ReadingMode.LTR)
+    private val themeModeFlow = MutableStateFlow(ThemeMode.SYSTEM)
 
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         every { userPreferencesRepository.gridColumns } returns gridColumnsFlow
         every { userPreferencesRepository.readingMode } returns readingModeFlow
+        every { userPreferencesRepository.themeMode } returns themeModeFlow
     }
 
     @After
@@ -80,5 +83,26 @@ class SettingsViewModelTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         coVerify { userPreferencesRepository.setReadingMode(ReadingMode.RTL) }
+    }
+
+    @Test
+    fun `themeMode emits current preference value`() = runTest(testDispatcher) {
+        val viewModel = createViewModel()
+
+        viewModel.themeMode.test {
+            assertEquals(ThemeMode.SYSTEM, awaitItem())
+            themeModeFlow.value = ThemeMode.DARK
+            assertEquals(ThemeMode.DARK, awaitItem())
+        }
+    }
+
+    @Test
+    fun `setThemeMode updates preference`() = runTest(testDispatcher) {
+        val viewModel = createViewModel()
+
+        viewModel.setThemeMode(ThemeMode.DARK)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        coVerify { userPreferencesRepository.setThemeMode(ThemeMode.DARK) }
     }
 }

@@ -92,12 +92,15 @@ fun ManAiNavHost(
             val viewModel: SettingsViewModel = hiltViewModel()
             val gridColumns by viewModel.gridColumns.collectAsState()
             val readingMode by viewModel.readingMode.collectAsState()
+            val themeMode by viewModel.themeMode.collectAsState()
 
             SettingsScreen(
                 gridColumns = gridColumns,
                 onGridColumnsChange = { viewModel.setGridColumns(it) },
                 readingMode = readingMode,
                 onReadingModeChange = { viewModel.setReadingMode(it) },
+                themeMode = themeMode,
+                onThemeModeChange = { viewModel.setThemeMode(it) },
                 onBack = { navController.popBackStack() }
             )
         }
