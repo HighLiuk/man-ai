@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.highliuk.manai.MainActivity
 import com.highliuk.manai.data.local.dao.MangaDao
@@ -14,6 +15,8 @@ import com.highliuk.manai.ui.home.HomeViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -64,6 +67,58 @@ class ManAiNavHostTest {
         composeTestRule.waitForIdle()
 
         composeTestRule.onNodeWithTag("reader_pager").assertIsDisplayed()
+    }
+
+    @Test
+    fun navigatingToReader_hidesStatusBar() = runTest {
+        mangaDao.insert(MangaEntity(uri = "content://immersive-test", title = "Immersive Test", pageCount = 3))
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Immersive Test").performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.mainClock.advanceTimeBy(500)
+        composeTestRule.waitForIdle()
+
+        val window = composeTestRule.activity.window
+        val view = window.decorView
+        val insets = view.rootWindowInsets
+        val statusBarsVisible = insets?.isVisible(WindowInsetsCompat.Type.statusBars()) ?: true
+
+        assertFalse("Status bar should be hidden in reader immersive mode", statusBarsVisible)
+    }
+
+    @Test
+    fun navigatingBackFromReader_restoresStatusBar() = runTest {
+        mangaDao.insert(MangaEntity(uri = "content://restore-test", title = "Restore Test", pageCount = 3))
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Restore Test").performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.mainClock.advanceTimeBy(500)
+        composeTestRule.waitForIdle()
+
+        // First verify status bar IS hidden in reader
+        val window = composeTestRule.activity.window
+        val view = window.decorView
+        val insetsInReader = view.rootWindowInsets
+        assertFalse(
+            "Status bar should be hidden in reader before navigating back",
+            insetsInReader?.isVisible(WindowInsetsCompat.Type.statusBars()) ?: true
+        )
+
+        // Show bars, then tap back
+        composeTestRule.onNodeWithTag("reader_pager").performClick()
+        composeTestRule.mainClock.advanceTimeBy(500)
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithContentDescription("Back").performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.mainClock.advanceTimeBy(500)
+        composeTestRule.waitForIdle()
+
+        val insetsAfterBack = view.rootWindowInsets
+        val statusBarsVisible = insetsAfterBack?.isVisible(WindowInsetsCompat.Type.statusBars()) ?: false
+
+        assertTrue("Status bar should be restored after leaving reader", statusBarsVisible)
     }
 
     @Test

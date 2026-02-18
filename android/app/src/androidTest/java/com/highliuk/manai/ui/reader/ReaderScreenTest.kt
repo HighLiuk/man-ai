@@ -13,6 +13,7 @@ import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.swipeRight
 import com.highliuk.manai.domain.model.Manga
 import com.highliuk.manai.domain.model.ReadingMode
+import androidx.compose.runtime.mutableStateOf
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -37,7 +38,8 @@ class ReaderScreenTest {
     private fun setUpReaderScreen(
         onBack: () -> Unit = {},
         onSettingsClick: () -> Unit = {},
-        onPageChanged: (Int) -> Unit = { lastPage = it }
+        onPageChanged: (Int) -> Unit = { lastPage = it },
+        onImmersiveModeChange: (Boolean) -> Unit = {}
     ) {
         lastPage = 0
         composeTestRule.setContent {
@@ -46,7 +48,8 @@ class ReaderScreenTest {
                 currentPage = 0,
                 onPageChanged = onPageChanged,
                 onBack = onBack,
-                onSettingsClick = onSettingsClick
+                onSettingsClick = onSettingsClick,
+                onImmersiveModeChange = onImmersiveModeChange
             )
         }
     }
@@ -228,6 +231,63 @@ class ReaderScreenTest {
         composeTestRule.onNodeWithText("OK").performClick()
         composeTestRule.waitForIdle()
         assertEquals(0, lastPage)
+    }
+
+    @Test
+    fun immersiveMode_disabledOnDispose() {
+        val immersiveStates = mutableListOf<Boolean>()
+        val showReader = mutableStateOf(true)
+        composeTestRule.setContent {
+            if (showReader.value) {
+                ReaderScreen(
+                    manga = testManga,
+                    currentPage = 0,
+                    onPageChanged = {},
+                    onBack = {},
+                    onSettingsClick = {},
+                    onImmersiveModeChange = { immersiveStates.add(it) }
+                )
+            }
+        }
+        composeTestRule.waitForIdle()
+        // At this point immersive was enabled (true) from LaunchedEffect
+        // Now remove ReaderScreen from composition
+        showReader.value = false
+        composeTestRule.waitForIdle()
+        // Last call should be false (restore status bar)
+        assertEquals(false, immersiveStates.last())
+    }
+
+    @Test
+    fun immersiveMode_reenabledAfterSecondTap() {
+        var lastImmersiveState: Boolean? = null
+        setUpReaderScreen(onImmersiveModeChange = { lastImmersiveState = it })
+        // tap 1: show bars
+        composeTestRule.onNodeWithTag("reader_pager").performClick()
+        advancePastDoubleTapTimeout()
+        // tap 2: hide bars
+        composeTestRule.onNodeWithTag("reader_pager").performClick()
+        advancePastDoubleTapTimeout()
+        composeTestRule.waitForIdle()
+        assertEquals(true, lastImmersiveState)
+    }
+
+    @Test
+    fun immersiveMode_disabledAfterTap_whenBarsShown() {
+        var lastImmersiveState: Boolean? = null
+        setUpReaderScreen(onImmersiveModeChange = { lastImmersiveState = it })
+        composeTestRule.onNodeWithTag("reader_pager").performClick()
+        advancePastDoubleTapTimeout()
+        composeTestRule.waitForIdle()
+        assertEquals(false, lastImmersiveState)
+    }
+
+    @Test
+    fun immersiveMode_enabledByDefault_whenBarsHidden() {
+        var lastImmersiveState: Boolean? = null
+        setUpReaderScreen(onImmersiveModeChange = { lastImmersiveState = it })
+        composeTestRule.waitForIdle()
+        assertEquals(true, lastImmersiveState)
     }
 
     @Test

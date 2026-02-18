@@ -1,5 +1,6 @@
 package com.highliuk.manai.ui.navigation
 
+import android.app.Activity
 import android.net.Uri
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -9,6 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -87,6 +92,10 @@ fun ManAiNavHost(
             val currentPage by viewModel.currentPage.collectAsState()
             val readingMode by viewModel.readingMode.collectAsState()
 
+            val view = LocalView.current
+            val window = (view.context as Activity).window
+            val insetsController = WindowCompat.getInsetsController(window, view)
+
             manga?.let { m ->
                 ReaderScreen(
                     manga = m,
@@ -94,7 +103,16 @@ fun ManAiNavHost(
                     readingMode = readingMode,
                     onPageChanged = viewModel::onPageChanged,
                     onBack = { navController.popBackStack() },
-                    onSettingsClick = { navController.navigate("settings") }
+                    onSettingsClick = { navController.navigate("settings") },
+                    onImmersiveModeChange = { immersive ->
+                        if (immersive) {
+                            insetsController.hide(WindowInsetsCompat.Type.statusBars())
+                            insetsController.systemBarsBehavior =
+                                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                        } else {
+                            insetsController.show(WindowInsetsCompat.Type.statusBars())
+                        }
+                    }
                 )
             }
         }

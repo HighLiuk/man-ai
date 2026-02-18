@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,6 +59,7 @@ fun ReaderScreen(
     onPageChanged: (Int) -> Unit,
     onBack: () -> Unit,
     onSettingsClick: () -> Unit,
+    onImmersiveModeChange: (Boolean) -> Unit = {},
 ) {
     val isRtl = readingMode == ReadingMode.RTL
     val pagerState = rememberPagerState(initialPage = currentPage) { manga.pageCount }
@@ -70,6 +72,14 @@ fun ReaderScreen(
             gestureState.resetZoom()
             onPageChanged(page)
         }
+    }
+
+    LaunchedEffect(gestureState.areBarsVisible) {
+        onImmersiveModeChange(!gestureState.areBarsVisible)
+    }
+
+    DisposableEffect(Unit) {
+        onDispose { onImmersiveModeChange(false) }
     }
 
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
