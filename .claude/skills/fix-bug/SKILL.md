@@ -39,6 +39,10 @@ For EACH bug fix, follow this cycle internally. Do NOT combine steps.
 - If you realize you wrote production code first, DELETE IT, write the test,
   verify RED, then rewrite the production code
 
+## TDD Violation Recovery
+
+If at ANY point you realize you skipped a test, didn't see RED, or wrote a test that passed immediately: **STOP.** Invoke `/tdd-verify` and follow its git stash-based remediation before continuing.
+
 ## Final verification (after GREEN)
 
 Before declaring the bug fixed, run the **full** test suite — both unit AND instrumented:

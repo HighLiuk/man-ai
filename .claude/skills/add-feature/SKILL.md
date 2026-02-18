@@ -19,6 +19,15 @@ For each task in the plan, complete a RED-GREEN-REFACTOR cycle:
 - **If the plan says "not testable", the plan is wrong.** Fix the plan, don't skip the test.
 - Navigation, Hilt wiring, DB queries — all testable. Use `@HiltAndroidTest`, `TestDatabaseModule`, `createAndroidComposeRule<MainActivity>()` as needed.
 
+## TDD Violation Recovery
+
+If at ANY point during Phase 1 you realize you:
+- Skipped a test (for any reason — including "it needs the emulator")
+- Didn't see RED output before writing production code
+- Wrote a test that passed immediately on first run
+
+**STOP.** Invoke `/tdd-verify` and follow its git stash-based remediation workflow before proceeding to the next task. Do NOT accumulate violations — fix each one as soon as you notice it.
+
 ## Phase 2: E2E Test (after all unit-level tasks are done)
 
 Write an instrumented test that simulates the REAL USER FLOW end-to-end.
