@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - 2026-02-20
+
+### Added
+
+- Open PDF via intent directly into reader without home screen flash
+- Go-to-page dialog via page indicator tap in reader
+- Navigate directly to reader after manga import
+- Hide status bar in reader immersive mode
+- Light/Dark/System theme mode in settings and reader
+
+### Fixed
+
+- Deduplicate manga by content hash instead of URI
+- Duplicate manga import navigating to reader with invalid ID
+
 ## [0.3.0] - 2026-02-17
 
 ### Added

@@ -6,12 +6,14 @@ An Android manga reader with on-device AI-powered text detection, OCR, and trans
 
 ## Features
 
-- **Manga library** — Homepage displaying imported manga with cover thumbnails
-- **PDF reader** — Fullscreen page viewer with swipe navigation and overlay controls
+- **Manga library** — Homepage displaying imported manga with cover thumbnails and duplicate detection
+- **PDF reader** — Fullscreen page viewer with swipe navigation, overlay controls, and immersive mode
+- **Open via intent** — Tap a PDF in any file manager to open it directly in the reader
 - **RTL reading mode** — Right-to-left page order for Japanese manga with settings toggle
 - **Zoom & pan** — Pinch-to-zoom, double-tap to zoom, and pan gestures with image-bound constraints
-- **Page slider** — Bottom progress bar with draggable slider for quick page navigation
+- **Page navigation** — Bottom progress bar with draggable slider and go-to-page dialog
 - **Reading progress** — Automatic save and resume from last read page
+- **Theme modes** — Light, Dark, and System theme with settings toggle
 
 ## Requirements
 
