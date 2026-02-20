@@ -79,10 +79,12 @@ android {
     }
 
     packaging {
+        jniLibs { pickFirsts += setOf("**/*.so") }
         resources {
             excludes += setOf(
                 "META-INF/LICENSE.md",
-                "META-INF/LICENSE-notice.md"
+                "META-INF/LICENSE-notice.md",
+                "META-INF/*"
             )
         }
     }
@@ -215,6 +217,9 @@ dependencies {
     // Coroutines
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
+
+    // ONNX Runtime
+    implementation(libs.onnxruntime.android)
 
     // Unit tests
     testImplementation(libs.junit)
