@@ -1,5 +1,6 @@
 package com.highliuk.manai.di
 
+import com.highliuk.manai.data.pdf.PdfFileCopier
 import com.highliuk.manai.data.pdf.PdfMetadataExtractor
 import dagger.Module
 import dagger.Provides
@@ -18,5 +19,12 @@ object TestPdfModule {
     fun providePdfMetadataExtractor(): PdfMetadataExtractor =
         object : PdfMetadataExtractor {
             override suspend fun extractPageCount(uri: String): Int = 5
+        }
+
+    @Provides
+    @Singleton
+    fun providePdfFileCopier(): PdfFileCopier =
+        object : PdfFileCopier {
+            override suspend fun copyToLocalStorage(sourceUri: String): String = sourceUri
         }
 }

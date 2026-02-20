@@ -6,11 +6,18 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.testTag
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -32,19 +39,24 @@ import kotlinx.coroutines.flow.SharedFlow
 @Composable
 fun ManAiNavHost(
     onImportClick: () -> Unit,
-    navigateToReader: SharedFlow<Long> = MutableSharedFlow()
+    navigateToReader: SharedFlow<Long> = MutableSharedFlow(),
+    hasIntentPdf: Boolean = false
 ) {
     val navController = rememberNavController()
+    val isFromIntent = remember { hasIntentPdf }
+    val startDestination = if (isFromIntent) "intent-loading" else "home"
 
     LaunchedEffect(navigateToReader) {
         navigateToReader.collect { mangaId ->
-            navController.navigate("reader/$mangaId")
+            navController.navigate("reader/$mangaId") {
+                popUpTo(startDestination) { inclusive = isFromIntent }
+            }
         }
     }
 
     NavHost(
         navController = navController,
-        startDestination = "home",
+        startDestination = startDestination,
         enterTransition = {
             slideInHorizontally(
                 initialOffsetX = { it },
@@ -70,6 +82,14 @@ fun ManAiNavHost(
             )
         }
     ) {
+        composable("intent-loading") {
+            Box(
+                modifier = Modifier.fillMaxSize().testTag("intent_loading"),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
         composable("home") {
             val viewModel: HomeViewModel = hiltViewModel()
             val mangaList by viewModel.mangaList.collectAsState()
@@ -102,7 +122,11 @@ fun ManAiNavHost(
                     currentPage = currentPage,
                     readingMode = readingMode,
                     onPageChanged = viewModel::onPageChanged,
-                    onBack = { navController.popBackStack() },
+                    onBack = {
+                        if (!navController.popBackStack()) {
+                            (view.context as? Activity)?.finish()
+                        }
+                    },
                     onSettingsClick = { navController.navigate("settings") },
                     onImmersiveModeChange = { immersive ->
                         if (immersive) {

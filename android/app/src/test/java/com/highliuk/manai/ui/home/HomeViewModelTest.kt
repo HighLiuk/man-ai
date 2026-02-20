@@ -2,6 +2,7 @@ package com.highliuk.manai.ui.home
 
 import app.cash.turbine.test
 import com.highliuk.manai.data.hash.FileHashProvider
+import com.highliuk.manai.data.pdf.PdfFileCopier
 import com.highliuk.manai.data.pdf.PdfMetadataExtractor
 import com.highliuk.manai.domain.model.Manga
 import com.highliuk.manai.domain.repository.MangaRepository
@@ -30,6 +31,7 @@ class HomeViewModelTest {
     private val pdfExtractor = mockk<PdfMetadataExtractor>(relaxed = true)
     private val fileHashProvider = mockk<FileHashProvider>(relaxed = true)
     private val userPreferencesRepository = mockk<UserPreferencesRepository>(relaxed = true)
+    private val pdfFileCopier = mockk<PdfFileCopier>(relaxed = true)
     private val mangaFlow = MutableStateFlow<List<Manga>>(emptyList())
     private val gridColumnsFlow = MutableStateFlow(2)
 
@@ -47,7 +49,7 @@ class HomeViewModelTest {
     }
 
     private fun createViewModel() = HomeViewModel(
-        repository, pdfExtractor, fileHashProvider, userPreferencesRepository
+        repository, pdfExtractor, fileHashProvider, userPreferencesRepository, pdfFileCopier
     )
 
     @Test
@@ -177,5 +179,44 @@ class HomeViewModelTest {
             gridColumnsFlow.value = 3
             assertEquals(3, awaitItem())
         }
+    }
+
+    @Test
+    fun `importMangaFromIntent copies file then imports`() = runTest(testDispatcher) {
+        coEvery { pdfFileCopier.copyToLocalStorage("content://external/manga.pdf") } returns "file:///local/manga.pdf"
+        coEvery { pdfExtractor.extractPageCount("file:///local/manga.pdf") } returns 20
+        coEvery { fileHashProvider.computeHash(uri = "file:///local/manga.pdf") } returns "hash123"
+        coEvery { repository.upsertManga(any()) } returns 5L
+        val viewModel = createViewModel()
+
+        viewModel.navigateToReader.test {
+            viewModel.importMangaFromIntent("content://external/manga.pdf", "manga.pdf")
+            testDispatcher.scheduler.advanceUntilIdle()
+            assertEquals(5L, awaitItem())
+        }
+
+        coVerify {
+            pdfFileCopier.copyToLocalStorage("content://external/manga.pdf")
+            repository.upsertManga(match {
+                it.uri == "file:///local/manga.pdf" &&
+                    it.title == "manga" &&
+                    it.pageCount == 20 &&
+                    it.contentHash == "hash123"
+            })
+        }
+    }
+
+    @Test
+    fun `importMangaFromIntent does not navigate on copy failure`() = runTest(testDispatcher) {
+        coEvery { pdfFileCopier.copyToLocalStorage(any()) } throws RuntimeException("copy failed")
+        val viewModel = createViewModel()
+
+        viewModel.navigateToReader.test {
+            viewModel.importMangaFromIntent("content://bad", "bad.pdf")
+            testDispatcher.scheduler.advanceUntilIdle()
+            expectNoEvents()
+        }
+
+        coVerify(exactly = 0) { repository.upsertManga(any()) }
     }
 }
