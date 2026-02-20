@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import com.highliuk.manai.domain.model.ReadingMode
 import com.highliuk.manai.domain.model.ThemeMode
 import org.junit.Assert.assertEquals
@@ -134,10 +135,10 @@ class SettingsScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Theme").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Light").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Dark").assertIsDisplayed()
-        composeTestRule.onNodeWithText("System").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Theme").performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText("Light").performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText("Dark").performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText("System").performScrollTo().assertIsDisplayed()
     }
 
     @Test
@@ -156,7 +157,7 @@ class SettingsScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Dark").performClick()
+        composeTestRule.onNodeWithText("Dark").performScrollTo().performClick()
 
         assertEquals(ThemeMode.DARK, selectedTheme)
     }
