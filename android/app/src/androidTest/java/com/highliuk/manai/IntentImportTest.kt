@@ -4,6 +4,8 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -49,17 +51,18 @@ class IntentImportTest {
         )
 
         ActivityScenario.launch<MainActivity>(intent).use { scenario ->
-            composeTestRule.waitForIdle()
-            composeTestRule.mainClock.advanceTimeBy(2000)
-            composeTestRule.waitForIdle()
+            composeTestRule.waitUntil(timeoutMillis = 5000) {
+                composeTestRule.onAllNodesWithTag("reader_pager").fetchSemanticsNodes().isNotEmpty()
+            }
 
             // Verify we're on the reader
             composeTestRule.onNodeWithTag("reader_pager").assertIsDisplayed()
 
             // Show top bar so we can tap back
             composeTestRule.onNodeWithTag("reader_pager").performClick()
-            composeTestRule.mainClock.advanceTimeBy(500)
-            composeTestRule.waitForIdle()
+            composeTestRule.waitUntil(timeoutMillis = 3000) {
+                composeTestRule.onAllNodesWithContentDescription("Back").fetchSemanticsNodes().isNotEmpty()
+            }
 
             // Tap back button
             composeTestRule.onNodeWithContentDescription("Back").performClick()
@@ -85,9 +88,9 @@ class IntentImportTest {
         )
 
         ActivityScenario.launch<MainActivity>(intent).use { scenario ->
-            composeTestRule.waitForIdle()
-            composeTestRule.mainClock.advanceTimeBy(2000)
-            composeTestRule.waitForIdle()
+            composeTestRule.waitUntil(timeoutMillis = 5000) {
+                composeTestRule.onAllNodesWithTag("reader_pager").fetchSemanticsNodes().isNotEmpty()
+            }
 
             // Verify manga was imported to DB
             val allManga = mangaDao.getAll().first()
