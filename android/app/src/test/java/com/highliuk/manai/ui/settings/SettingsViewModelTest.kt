@@ -1,6 +1,7 @@
 package com.highliuk.manai.ui.settings
 
 import app.cash.turbine.test
+import com.highliuk.manai.domain.model.AppLanguage
 import com.highliuk.manai.domain.model.ReadingMode
 import com.highliuk.manai.domain.model.ThemeMode
 import com.highliuk.manai.domain.repository.UserPreferencesRepository
@@ -27,6 +28,7 @@ class SettingsViewModelTest {
     private val gridColumnsFlow = MutableStateFlow(2)
     private val readingModeFlow = MutableStateFlow(ReadingMode.LTR)
     private val themeModeFlow = MutableStateFlow(ThemeMode.SYSTEM)
+    private val appLanguageFlow = MutableStateFlow(AppLanguage.SYSTEM)
 
     @Before
     fun setUp() {
@@ -34,6 +36,7 @@ class SettingsViewModelTest {
         every { userPreferencesRepository.gridColumns } returns gridColumnsFlow
         every { userPreferencesRepository.readingMode } returns readingModeFlow
         every { userPreferencesRepository.themeMode } returns themeModeFlow
+        every { userPreferencesRepository.appLanguage } returns appLanguageFlow
     }
 
     @After
@@ -104,5 +107,26 @@ class SettingsViewModelTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         coVerify { userPreferencesRepository.setThemeMode(ThemeMode.DARK) }
+    }
+
+    @Test
+    fun `appLanguage emits current preference value`() = runTest(testDispatcher) {
+        val viewModel = createViewModel()
+
+        viewModel.appLanguage.test {
+            assertEquals(AppLanguage.SYSTEM, awaitItem())
+            appLanguageFlow.value = AppLanguage.ITALIAN
+            assertEquals(AppLanguage.ITALIAN, awaitItem())
+        }
+    }
+
+    @Test
+    fun `setAppLanguage updates preference`() = runTest(testDispatcher) {
+        val viewModel = createViewModel()
+
+        viewModel.setAppLanguage(AppLanguage.ITALIAN)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        coVerify { userPreferencesRepository.setAppLanguage(AppLanguage.ITALIAN) }
     }
 }

@@ -1,5 +1,6 @@
 package com.highliuk.manai.domain.repository
 
+import com.highliuk.manai.domain.model.AppLanguage
 import com.highliuk.manai.domain.model.ReadingMode
 import com.highliuk.manai.domain.model.ThemeMode
 import kotlinx.coroutines.flow.Flow
@@ -13,4 +14,7 @@ interface UserPreferencesRepository {
 
     val themeMode: Flow<ThemeMode>
     suspend fun setThemeMode(mode: ThemeMode)
+
+    val appLanguage: Flow<AppLanguage>
+    suspend fun setAppLanguage(language: AppLanguage)
 }

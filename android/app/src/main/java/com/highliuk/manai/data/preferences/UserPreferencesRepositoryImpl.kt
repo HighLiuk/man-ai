@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.highliuk.manai.domain.model.AppLanguage
 import com.highliuk.manai.domain.model.ReadingMode
 import com.highliuk.manai.domain.model.ThemeMode
 import com.highliuk.manai.domain.repository.UserPreferencesRepository
@@ -27,6 +28,9 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val DEFAULT_THEME_MODE = ThemeMode.SYSTEM
+
+        val APP_LANGUAGE = stringPreferencesKey("app_language")
+        val DEFAULT_APP_LANGUAGE = AppLanguage.SYSTEM
     }
 
     override val gridColumns: Flow<Int> = dataStore.data.map { preferences ->
@@ -75,6 +79,25 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override suspend fun setThemeMode(mode: ThemeMode) {
         dataStore.edit { preferences ->
             preferences[THEME_MODE] = mode.name
+        }
+    }
+
+    override val appLanguage: Flow<AppLanguage> = dataStore.data.map { preferences ->
+        val stored = preferences[APP_LANGUAGE]
+        if (stored != null) {
+            try {
+                AppLanguage.valueOf(stored)
+            } catch (_: IllegalArgumentException) {
+                DEFAULT_APP_LANGUAGE
+            }
+        } else {
+            DEFAULT_APP_LANGUAGE
+        }
+    }
+
+    override suspend fun setAppLanguage(language: AppLanguage) {
+        dataStore.edit { preferences ->
+            preferences[APP_LANGUAGE] = language.name
         }
     }
 }

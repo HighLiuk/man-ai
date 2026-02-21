@@ -20,6 +20,12 @@
     <string name="theme_mode_dark">Dark</string>
     <string name="theme_mode_system">System</string>
 
+    <!-- Language -->
+    <string name="language">Language</string>
+    <string name="language_system">System default</string>
+    <string name="language_english">English</string>
+    <string name="language_italian">Italiano</string>
+
     <!-- Reader screen -->
     <string name="reader_settings">Reader settings</string>
     <string name="page_content">Page %d</string>

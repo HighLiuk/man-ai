@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Man AI</string>
+
+    <!-- Home screen -->
+    <string name="settings">Impostazioni</string>
+    <string name="import_pdf">Importa PDF</string>
+
+    <!-- Settings screen -->
+    <string name="back">Indietro</string>
+    <string name="grid_columns">Colonne griglia</string>
+    <string name="n_columns">%d colonne</string>
+    <string name="reading_mode">Modalità di lettura</string>
+    <string name="reading_mode_ltr">Da sinistra a destra (LTR)</string>
+    <string name="reading_mode_rtl">Da destra a sinistra (RTL)</string>
+
+    <!-- Theme mode -->
+    <string name="theme_mode">Tema</string>
+    <string name="theme_mode_light">Chiaro</string>
+    <string name="theme_mode_dark">Scuro</string>
+    <string name="theme_mode_system">Sistema</string>
+
+    <!-- Language -->
+    <string name="language">Lingua</string>
+    <string name="language_system">Predefinito di sistema</string>
+    <string name="language_english">English</string>
+    <string name="language_italian">Italiano</string>
+
+    <!-- Reader screen -->
+    <string name="reader_settings">Impostazioni lettore</string>
+    <string name="page_content">Pagina %d</string>
+    <string name="page_indicator">%1$d / %2$d</string>
+    <string name="page_slider_description">Barra di avanzamento pagine</string>
+    <string name="go_to_page">Vai alla pagina</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Annulla</string>
+
+    <!-- PDF thumbnail -->
+    <string name="pdf_thumbnail">Miniatura PDF</string>
+    <string name="pdf_placeholder">Segnaposto PDF</string>
+</resources>

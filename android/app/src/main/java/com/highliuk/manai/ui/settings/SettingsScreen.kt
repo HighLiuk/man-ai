@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.highliuk.manai.R
+import com.highliuk.manai.domain.model.AppLanguage
 import com.highliuk.manai.domain.model.ReadingMode
 import com.highliuk.manai.domain.model.ThemeMode
 
@@ -36,6 +37,8 @@ fun SettingsScreen(
     onReadingModeChange: (ReadingMode) -> Unit,
     themeMode: ThemeMode,
     onThemeModeChange: (ThemeMode) -> Unit,
+    appLanguage: AppLanguage,
+    onAppLanguageChange: (AppLanguage) -> Unit,
     onBack: () -> Unit
 ) {
     Scaffold(
@@ -136,6 +139,35 @@ fun SettingsScreen(
                     )
                     Text(
                         text = themeLabel,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+            }
+
+            Text(
+                text = stringResource(R.string.language),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp)
+            )
+            AppLanguage.entries.forEach { language ->
+                val languageLabel = when (language) {
+                    AppLanguage.SYSTEM -> stringResource(R.string.language_system)
+                    AppLanguage.ENGLISH -> stringResource(R.string.language_english)
+                    AppLanguage.ITALIAN -> stringResource(R.string.language_italian)
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onAppLanguageChange(language) }
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = appLanguage == language,
+                        onClick = { onAppLanguageChange(language) }
+                    )
+                    Text(
+                        text = languageLabel,
                         modifier = Modifier.padding(start = 8.dp)
                     )
                 }

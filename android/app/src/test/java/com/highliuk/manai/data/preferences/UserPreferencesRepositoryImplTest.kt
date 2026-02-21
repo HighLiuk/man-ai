@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.highliuk.manai.domain.model.AppLanguage
 import com.highliuk.manai.domain.model.ReadingMode
 import com.highliuk.manai.domain.model.ThemeMode
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -144,5 +145,34 @@ class UserPreferencesRepositoryImplTest {
         val repository = UserPreferencesRepositoryImpl(dataStore)
 
         assertEquals(ThemeMode.SYSTEM, repository.themeMode.first())
+    }
+
+    @Test
+    fun `appLanguage emits default value SYSTEM`() = runTest(testDispatcher) {
+        val repository = createRepository()
+
+        val result = repository.appLanguage.first()
+
+        assertEquals(AppLanguage.SYSTEM, result)
+    }
+
+    @Test
+    fun `setAppLanguage persists ITALIAN value`() = runTest(testDispatcher) {
+        val repository = createRepository()
+
+        repository.setAppLanguage(AppLanguage.ITALIAN)
+
+        assertEquals(AppLanguage.ITALIAN, repository.appLanguage.first())
+    }
+
+    @Test
+    fun `appLanguage with invalid stored value defaults to SYSTEM`() = runTest(testDispatcher) {
+        val dataStore = createDataStore()
+        dataStore.edit { preferences ->
+            preferences[stringPreferencesKey("app_language")] = "INVALID"
+        }
+        val repository = UserPreferencesRepositoryImpl(dataStore)
+
+        assertEquals(AppLanguage.SYSTEM, repository.appLanguage.first())
     }
 }

@@ -4,20 +4,23 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
+import androidx.core.os.LocaleListCompat
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.highliuk.manai.domain.model.AppLanguage
 import com.highliuk.manai.domain.model.ThemeMode
 import com.highliuk.manai.domain.model.isDark
 import com.highliuk.manai.domain.repository.UserPreferencesRepository
@@ -25,10 +28,12 @@ import com.highliuk.manai.ui.home.HomeViewModel
 import com.highliuk.manai.ui.navigation.ManAiNavHost
 import com.highliuk.manai.ui.theme.ManAiTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var userPreferencesRepository: UserPreferencesRepository
@@ -38,6 +43,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val savedLanguage = runBlocking { userPreferencesRepository.appLanguage.first() }
+        if (savedLanguage != AppLanguage.SYSTEM) {
+            AppCompatDelegate.setApplicationLocales(
+                LocaleListCompat.forLanguageTags(savedLanguage.tag)
+            )
+        }
 
         if (savedInstanceState == null) {
             handleIncomingIntent(intent)

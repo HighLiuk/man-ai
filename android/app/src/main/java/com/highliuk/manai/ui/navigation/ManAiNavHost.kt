@@ -18,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -162,6 +164,7 @@ fun ManAiNavHost(
             val gridColumns by viewModel.gridColumns.collectAsState()
             val readingMode by viewModel.readingMode.collectAsState()
             val themeMode by viewModel.themeMode.collectAsState()
+            val appLanguage by viewModel.appLanguage.collectAsState()
 
             SettingsScreen(
                 gridColumns = gridColumns,
@@ -170,6 +173,16 @@ fun ManAiNavHost(
                 onReadingModeChange = { viewModel.setReadingMode(it) },
                 themeMode = themeMode,
                 onThemeModeChange = { viewModel.setThemeMode(it) },
+                appLanguage = appLanguage,
+                onAppLanguageChange = { language ->
+                    viewModel.setAppLanguage(language)
+                    val locales = if (language.tag != null) {
+                        LocaleListCompat.forLanguageTags(language.tag)
+                    } else {
+                        LocaleListCompat.getEmptyLocaleList()
+                    }
+                    AppCompatDelegate.setApplicationLocales(locales)
+                },
                 onBack = { navController.popBackStack() }
             )
         }

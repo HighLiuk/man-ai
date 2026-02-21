@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import com.highliuk.manai.domain.model.AppLanguage
 import com.highliuk.manai.domain.model.ReadingMode
 import com.highliuk.manai.domain.model.ThemeMode
 import org.junit.Assert.assertEquals
@@ -29,6 +30,8 @@ class SettingsScreenTest {
                 onReadingModeChange = {},
                 themeMode = ThemeMode.SYSTEM,
                 onThemeModeChange = {},
+                appLanguage = AppLanguage.SYSTEM,
+                onAppLanguageChange = {},
                 onBack = {}
             )
         }
@@ -50,6 +53,8 @@ class SettingsScreenTest {
                 onReadingModeChange = {},
                 themeMode = ThemeMode.SYSTEM,
                 onThemeModeChange = {},
+                appLanguage = AppLanguage.SYSTEM,
+                onAppLanguageChange = {},
                 onBack = {}
             )
         }
@@ -71,6 +76,8 @@ class SettingsScreenTest {
                 onReadingModeChange = {},
                 themeMode = ThemeMode.SYSTEM,
                 onThemeModeChange = {},
+                appLanguage = AppLanguage.SYSTEM,
+                onAppLanguageChange = {},
                 onBack = { backCalled = true }
             )
         }
@@ -91,6 +98,8 @@ class SettingsScreenTest {
                 onReadingModeChange = {},
                 themeMode = ThemeMode.SYSTEM,
                 onThemeModeChange = {},
+                appLanguage = AppLanguage.SYSTEM,
+                onAppLanguageChange = {},
                 onBack = {}
             )
         }
@@ -112,6 +121,8 @@ class SettingsScreenTest {
                 onReadingModeChange = { selectedMode = it },
                 themeMode = ThemeMode.SYSTEM,
                 onThemeModeChange = {},
+                appLanguage = AppLanguage.SYSTEM,
+                onAppLanguageChange = {},
                 onBack = {}
             )
         }
@@ -131,6 +142,8 @@ class SettingsScreenTest {
                 onReadingModeChange = {},
                 themeMode = ThemeMode.SYSTEM,
                 onThemeModeChange = {},
+                appLanguage = AppLanguage.SYSTEM,
+                onAppLanguageChange = {},
                 onBack = {}
             )
         }
@@ -153,6 +166,8 @@ class SettingsScreenTest {
                 onReadingModeChange = {},
                 themeMode = ThemeMode.SYSTEM,
                 onThemeModeChange = { selectedTheme = it },
+                appLanguage = AppLanguage.SYSTEM,
+                onAppLanguageChange = {},
                 onBack = {}
             )
         }
@@ -160,5 +175,50 @@ class SettingsScreenTest {
         composeTestRule.onNodeWithText("Dark").performScrollTo().performClick()
 
         assertEquals(ThemeMode.DARK, selectedTheme)
+    }
+
+    @Test
+    fun displaysLanguageSection() {
+        composeTestRule.setContent {
+            SettingsScreen(
+                gridColumns = 2,
+                onGridColumnsChange = {},
+                readingMode = ReadingMode.LTR,
+                onReadingModeChange = {},
+                themeMode = ThemeMode.SYSTEM,
+                onThemeModeChange = {},
+                appLanguage = AppLanguage.SYSTEM,
+                onAppLanguageChange = {},
+                onBack = {}
+            )
+        }
+
+        composeTestRule.onNodeWithText("Language").performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText("System default").performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText("English").performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText("Italiano").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun clickingItalianLanguageCallsCallback() {
+        var selectedLanguage: AppLanguage? = null
+
+        composeTestRule.setContent {
+            SettingsScreen(
+                gridColumns = 2,
+                onGridColumnsChange = {},
+                readingMode = ReadingMode.LTR,
+                onReadingModeChange = {},
+                themeMode = ThemeMode.SYSTEM,
+                onThemeModeChange = {},
+                appLanguage = AppLanguage.SYSTEM,
+                onAppLanguageChange = { selectedLanguage = it },
+                onBack = {}
+            )
+        }
+
+        composeTestRule.onNodeWithText("Italiano").performScrollTo().performClick()
+
+        assertEquals(AppLanguage.ITALIAN, selectedLanguage)
     }
 }
