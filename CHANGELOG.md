@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0] - 2026-02-22
+
+### Added
+
+- Delete manga from library with long-press selection and confirmation dialog
+- Per-app language selection (English and Italian)
+- Hero animation between manga grid and reader
+- On-device ONNX text detection and OCR recognition pipeline
+- ONNX model download script and session lifecycle management
+
+### Fixed
+
+- Settings screen not scrollable on small displays
+
 ## [0.4.0] - 2026-02-20
 
 ### Added

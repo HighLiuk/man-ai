@@ -14,6 +14,8 @@ An Android manga reader with on-device AI-powered text detection, OCR, and trans
 - **Page navigation** — Bottom progress bar with draggable slider and go-to-page dialog
 - **Reading progress** — Automatic save and resume from last read page
 - **Theme modes** — Light, Dark, and System theme with settings toggle
+- **Language selection** — Per-app language switching between English and Italian
+- **On-device AI** — ONNX-based text detection and OCR recognition pipeline running entirely on-device
 
 ## Requirements
 
