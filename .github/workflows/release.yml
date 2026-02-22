@@ -31,6 +31,17 @@ jobs:
       - name: Run detekt and unit tests
         run: ./gradlew detekt testDebugUnitTest
 
+      - name: Cache ONNX models
+        uses: actions/cache@v4
+        with:
+          path: android/app/src/main/assets/models
+          key: onnx-models-${{ hashFiles('scripts/download-models.sh') }}
+
+      - name: Download ONNX models
+        run: bash "$GITHUB_WORKSPACE/scripts/download-models.sh"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules

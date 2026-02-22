@@ -10,11 +10,6 @@ DEST="$(git rev-parse --show-toplevel)/android/app/src/main/assets/models"
 
 mkdir -p "$DEST"
 
-if ls "$DEST"/*.onnx &>/dev/null; then
-  echo "Models already present in $DEST — skipping download."
-  exit 0
-fi
-
 # Fetch asset URLs from latest release
 API_URL="https://api.github.com/repos/$REPO/releases/latest"
 AUTH_HEADER=""
