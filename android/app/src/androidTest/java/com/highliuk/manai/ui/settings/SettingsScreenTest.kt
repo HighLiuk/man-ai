@@ -105,8 +105,8 @@ class SettingsScreenTest {
         }
 
         composeTestRule.onNodeWithText("Reading Mode").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Left to Right (LTR)").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Right to Left (RTL)").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Left to Right").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Right to Left").assertIsDisplayed()
     }
 
     @Test
@@ -127,7 +127,7 @@ class SettingsScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Right to Left (RTL)").performClick()
+        composeTestRule.onNodeWithText("Right to Left").performClick()
 
         assertEquals(ReadingMode.RTL, selectedMode)
     }
