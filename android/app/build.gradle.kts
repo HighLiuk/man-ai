@@ -124,8 +124,8 @@ kover {
                     // Android-dependent implementations
                     "*.AndroidPdfMetadataExtractor",
                     "*.OnnxSessionManager",
-                    // OnnxText* outer classes have TODO() inference stubs (Macro Task 5)
-                    // Their Companion objects (pure functions) remain covered
+                    // OnnxText* outer classes require ONNX runtime (Android only)
+                    // Their Companion objects (pure functions) remain covered by unit tests
                     "*.OnnxTextDetector",
                     "*.OnnxTextRecognizer",
                     // Room database abstract class
