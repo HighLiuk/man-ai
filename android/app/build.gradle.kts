@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -25,13 +27,20 @@ android {
 
     signingConfigs {
         create("release") {
-            val keystoreFile = System.getenv("KEYSTORE_FILE")
-            if (keystoreFile != null) {
-                storeFile = file(keystoreFile)
-                storePassword = System.getenv("KEYSTORE_PASSWORD")
-                keyAlias = System.getenv("KEY_ALIAS")
-                keyPassword = System.getenv("KEY_PASSWORD")
-            }
+            val localProps = Properties()
+            val localFile = rootProject.file("local.properties")
+            if (localFile.exists()) { localFile.inputStream().use { localProps.load(it) } }
+
+            storeFile = file(
+                System.getenv("KEYSTORE_FILE")
+                    ?: localProps.getProperty("signing.storeFile", "keystore.jks")
+            )
+            storePassword = System.getenv("KEYSTORE_PASSWORD")
+                ?: localProps.getProperty("signing.storePassword")
+            keyAlias = System.getenv("KEY_ALIAS")
+                ?: localProps.getProperty("signing.keyAlias")
+            keyPassword = System.getenv("KEY_PASSWORD")
+                ?: localProps.getProperty("signing.keyPassword")
         }
     }
 
