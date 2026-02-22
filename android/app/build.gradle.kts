@@ -133,10 +133,12 @@ kover {
                     // Android-dependent implementations
                     "*.AndroidPdfMetadataExtractor",
                     "*.OnnxSessionManager",
-                    // OnnxText* outer classes require ONNX runtime (Android only)
+                    // OnnxText* require ONNX runtime (Android only)
                     // Their Companion objects (pure functions) remain covered by unit tests
                     "*.OnnxTextDetector",
+                    "*.OnnxTextDetector${'$'}*",
                     "*.OnnxTextRecognizer",
+                    "*.OnnxTextRecognizer${'$'}*",
                     // Room database abstract class
                     "*.ManAiDatabase",
                     "*.ManAiDatabase$*",

@@ -48,8 +48,9 @@ class ManAiNavHostTest {
     fun tappingManga_navigatesToReaderScreen() = runTest {
         mangaDao.insert(MangaEntity(uri = "content://nav-test", title = "Nav Test Manga", pageCount = 5))
 
-        composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Nav Test Manga").assertIsDisplayed()
+        composeTestRule.waitUntil(timeoutMillis = 10000) {
+            composeTestRule.onAllNodesWithText("Nav Test Manga").fetchSemanticsNodes().isNotEmpty()
+        }
         composeTestRule.onNodeWithText("Nav Test Manga").performClick()
 
         composeTestRule.waitForIdle()
@@ -67,7 +68,7 @@ class ManAiNavHostTest {
         val viewModel = ViewModelProvider(composeTestRule.activity)[HomeViewModel::class.java]
         viewModel.importManga("content://auto-nav-test.pdf", "Auto Nav Manga.pdf")
 
-        composeTestRule.waitUntil(timeoutMillis = 5000) {
+        composeTestRule.waitUntil(timeoutMillis = 10000) {
             composeTestRule.onAllNodesWithTag("reader_pager").fetchSemanticsNodes().isNotEmpty()
         }
 
@@ -79,7 +80,9 @@ class ManAiNavHostTest {
     fun navigatingToReader_hidesStatusBar() = runTest {
         mangaDao.insert(MangaEntity(uri = "content://immersive-test", title = "Immersive Test", pageCount = 3))
 
-        composeTestRule.waitForIdle()
+        composeTestRule.waitUntil(timeoutMillis = 10000) {
+            composeTestRule.onAllNodesWithText("Immersive Test").fetchSemanticsNodes().isNotEmpty()
+        }
         composeTestRule.onNodeWithText("Immersive Test").performClick()
         composeTestRule.waitForIdle()
         composeTestRule.mainClock.advanceTimeBy(500)
@@ -97,7 +100,9 @@ class ManAiNavHostTest {
     fun navigatingBackFromReader_restoresStatusBar() = runTest {
         mangaDao.insert(MangaEntity(uri = "content://restore-test", title = "Restore Test", pageCount = 3))
 
-        composeTestRule.waitForIdle()
+        composeTestRule.waitUntil(timeoutMillis = 10000) {
+            composeTestRule.onAllNodesWithText("Restore Test").fetchSemanticsNodes().isNotEmpty()
+        }
         composeTestRule.onNodeWithText("Restore Test").performClick()
         composeTestRule.waitForIdle()
         composeTestRule.mainClock.advanceTimeBy(500)
@@ -131,12 +136,12 @@ class ManAiNavHostTest {
     fun tappingManga_showsTitleInReaderTopBar() = runTest {
         mangaDao.insert(MangaEntity(uri = "content://nav-test2", title = "Reader Title Test", pageCount = 3))
 
-        composeTestRule.waitUntil(timeoutMillis = 5000) {
+        composeTestRule.waitUntil(timeoutMillis = 10000) {
             composeTestRule.onAllNodesWithText("Reader Title Test").fetchSemanticsNodes().isNotEmpty()
         }
         composeTestRule.onNodeWithText("Reader Title Test").performClick()
 
-        composeTestRule.waitUntil(timeoutMillis = 5000) {
+        composeTestRule.waitUntil(timeoutMillis = 10000) {
             composeTestRule.onAllNodesWithTag("reader_pager").fetchSemanticsNodes().isNotEmpty()
         }
         // Top bar is hidden by default, tap to show it

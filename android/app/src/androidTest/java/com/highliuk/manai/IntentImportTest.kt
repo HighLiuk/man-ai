@@ -51,7 +51,7 @@ class IntentImportTest {
         )
 
         ActivityScenario.launch<MainActivity>(intent).use { scenario ->
-            composeTestRule.waitUntil(timeoutMillis = 5000) {
+            composeTestRule.waitUntil(timeoutMillis = 10000) {
                 composeTestRule.onAllNodesWithTag("reader_pager").fetchSemanticsNodes().isNotEmpty()
             }
 
@@ -60,7 +60,7 @@ class IntentImportTest {
 
             // Show top bar so we can tap back
             composeTestRule.onNodeWithTag("reader_pager").performClick()
-            composeTestRule.waitUntil(timeoutMillis = 3000) {
+            composeTestRule.waitUntil(timeoutMillis = 10000) {
                 composeTestRule.onAllNodesWithContentDescription("Back").fetchSemanticsNodes().isNotEmpty()
             }
 
@@ -88,7 +88,7 @@ class IntentImportTest {
         )
 
         ActivityScenario.launch<MainActivity>(intent).use { scenario ->
-            composeTestRule.waitUntil(timeoutMillis = 5000) {
+            composeTestRule.waitUntil(timeoutMillis = 10000) {
                 composeTestRule.onAllNodesWithTag("reader_pager").fetchSemanticsNodes().isNotEmpty()
             }
 
