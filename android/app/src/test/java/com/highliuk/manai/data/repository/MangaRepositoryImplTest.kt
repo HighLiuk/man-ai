@@ -105,6 +105,28 @@ class MangaRepositoryImplTest {
     }
 
     @Test
+    fun `getMangaByUri returns domain model`() = runTest {
+        val entity = MangaEntity(
+            id = 1, uri = "content://test/file.pdf", title = "Test", pageCount = 10
+        )
+        coEvery { dao.getByUri("content://test/file.pdf") } returns entity
+
+        val result = repository.getMangaByUri("content://test/file.pdf")
+
+        assertEquals("Test", result?.title)
+        assertEquals("content://test/file.pdf", result?.uri)
+    }
+
+    @Test
+    fun `getMangaByUri returns null when not found`() = runTest {
+        coEvery { dao.getByUri("nonexistent") } returns null
+
+        val result = repository.getMangaByUri("nonexistent")
+
+        assertNull(result)
+    }
+
+    @Test
     fun `updateLastReadPage delegates to dao`() = runTest {
         repository.updateLastReadPage(1L, 42)
 

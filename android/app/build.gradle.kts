@@ -76,6 +76,15 @@ android {
     @Suppress("UnstableApiUsage")
     testOptions {
         unitTests.isReturnDefaultValues = true
+        managedDevices {
+            localDevices {
+                create("ciDevice") {
+                    device = "Pixel 2"
+                    apiLevel = 30
+                    systemImageSource = "aosp"
+                }
+            }
+        }
     }
 
     packaging {
@@ -126,8 +135,11 @@ kover {
                     "*.ManAiDatabase$*",
                     // Theme color scheme initializations
                     "*.ui.theme.*",
-                    // Private companion synthetic getters (unreachable from tests)
+                    // Kotlin compiler synthetic classes (unreachable from tests)
                     "*.UserPreferencesRepositoryImpl${'$'}Companion",
+                    // Room DAO interface — concrete methods compile to $DefaultImpls
+                    // which Room bypasses with its generated implementation
+                    "*.MangaDao*",
                 )
                 annotatedBy(
                     "*Generated*",
